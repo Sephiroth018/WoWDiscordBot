@@ -7,6 +7,6 @@ namespace HeroismDiscordBot.Service.Entities
     {
         [Key]
         public int Id { get; set; }
-        public ICollection<Character> Characters { get; set; }
+        public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
     }
 }

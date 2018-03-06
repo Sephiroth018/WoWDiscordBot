@@ -25,7 +25,7 @@ namespace HeroismDiscordBot.Service.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("wnsxvqvbnasnfhchf6hjkbs84p4jqdy4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WoWApiKey {
             get {
                 return ((string)(this["WoWApiKey"]));
@@ -34,7 +34,7 @@ namespace HeroismDiscordBot.Service.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Antonidas")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WoWRealm {
             get {
                 return ((string)(this["WoWRealm"]));
@@ -43,7 +43,7 @@ namespace HeroismDiscordBot.Service.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Heroism")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WoWGuild {
             get {
                 return ((string)(this["WoWGuild"]));
@@ -52,7 +52,7 @@ namespace HeroismDiscordBot.Service.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("420312901157519360")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public ulong DiscordGuildId {
             get {
                 return ((ulong)(this["DiscordGuildId"]));
@@ -61,7 +61,7 @@ namespace HeroismDiscordBot.Service.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("NDIwMjkxNDUwNTY0MjQ3NTYy.DX9h7w.fvOriNcM729-2rfruqDTiNxceCE")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string DiscordToken {
             get {
                 return ((string)(this["DiscordToken"]));

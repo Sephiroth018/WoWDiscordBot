@@ -8,5 +8,6 @@ namespace HeroismDiscordBot.Service.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public int ItemLevel { get; set; }
+        public string Role { get; set; }
     }
 }

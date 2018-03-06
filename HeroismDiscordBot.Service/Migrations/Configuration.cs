@@ -1,18 +1,16 @@
+using System.Data.Entity.Migrations;
+using HeroismDiscordBot.Service.Entities;
+
 namespace HeroismDiscordBot.Service.Migrations
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
-
-    internal sealed class Configuration : DbMigrationsConfiguration<HeroismDiscordBot.Service.Entities.Database>
+    internal sealed class Configuration : DbMigrationsConfiguration<BotContext>
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(HeroismDiscordBot.Service.Entities.Database context)
+        protected override void Seed(BotContext context)
         {
             //  This method will be called after migrating to the latest version.
 

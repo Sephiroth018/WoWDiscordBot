@@ -6,7 +6,10 @@ namespace HeroismDiscordBot.Service.Entities
     {
         [Key]
         public int Id { get; set; }
-        public Character Character { get; set; }
+        public virtual Character Character { get; set; }
+        public virtual Event Event { get; set; }
         public InvitationStatus Status { get; set; }
+        public int CharacterId { get; set; }
+        public int EventId { get; set; }
     }
 }

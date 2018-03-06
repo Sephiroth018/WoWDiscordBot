@@ -11,6 +11,6 @@ namespace HeroismDiscordBot.Service.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime Start { get; set; }
-        public ICollection<Invitation> Invitations { get; set; }
+        public virtual ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
     }
 }
