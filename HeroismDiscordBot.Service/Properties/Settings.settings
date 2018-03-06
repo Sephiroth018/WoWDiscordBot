@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HeroismDiscordBot.Service.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WoWApiKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">wnsxvqvbnasnfhchf6hjkbs84p4jqdy4</Value>
+    </Setting>
+    <Setting Name="WoWRealm" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Antonidas</Value>
+    </Setting>
+    <Setting Name="WoWGuild" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Heroism</Value>
+    </Setting>
+    <Setting Name="DiscordGuildId" Type="System.UInt64" Scope="Application">
+      <Value Profile="(Default)">420312901157519360</Value>
+    </Setting>
+    <Setting Name="DiscordToken" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">NDIwMjkxNDUwNTY0MjQ3NTYy.DX9h7w.fvOriNcM729-2rfruqDTiNxceCE</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

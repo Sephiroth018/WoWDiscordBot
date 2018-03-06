@@ -1,25 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HeroismDiscordBot.Service
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
-        static void Main()
+        private static void Main()
         {
+#if DEBUG
+            var service = new Service();
+            service.StartService();
+
+            Console.ReadKey();
+            service.Stop();
+#else
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
-            {
-                new Service1()
-            };
+                            {
+                                new Service()
+                            };
             ServiceBase.Run(ServicesToRun);
+#endif
         }
     }
 }
