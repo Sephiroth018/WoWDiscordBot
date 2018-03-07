@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Entities;
-using HeroismDiscordBot.Service.Properties;
 using MoreLinq;
 using WowDotNetAPI;
 using WowDotNetAPI.Models;
@@ -17,18 +16,20 @@ namespace HeroismDiscordBot.Service.Processors.Transformer
         private readonly WowExplorer _wowClient;
         private readonly IEnumerable<CharacterClassInfo> _classInfo;
         private readonly BotContext _botContext;
+        private readonly Configuration _configuration;
 
-        public CharacterTransformer(WowExplorer wowClient, IEnumerable<CharacterClassInfo> classInfo, BotContext botContext)
+        public CharacterTransformer(WowExplorer wowClient, IEnumerable<CharacterClassInfo> classInfo, BotContext botContext, Configuration configuration)
         {
             _wowClient = wowClient;
             _classInfo = classInfo;
             _botContext = botContext;
+            _configuration = configuration;
         }
 
         public async Task<(CharacterData characterData, Character character)> TransformToCharacterData((GuildMember, Character) data)
         {
             var (guildMember, character) = data;
-            var characterInfo = await Task.Run(() => _wowClient.GetCharacter(Region.EU, Settings.Default.WoWRealm, guildMember.Character.Name, CharacterOptions.GetEverything));
+            var characterInfo = await Task.Run(() => _wowClient.GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, guildMember.Character.Name, CharacterOptions.GetEverything));
             var result = new CharacterData
                          {
                              Name = characterInfo.Name,
@@ -61,7 +62,7 @@ namespace HeroismDiscordBot.Service.Processors.Transformer
 
         private string GenerateAchievementsHash(Achievements achievements)
         {
-            var achievementStringCollection = achievements.AchievementsCompleted.Zip(achievements.AchievementsCompletedTimestamp, (id, timestamp) => $"{id}{new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(timestamp)}");
+            var achievementStringCollection = achievements.AchievementsCompleted.Zip(achievements.AchievementsCompletedTimestamp, (id, timestamp) => $"{id}{timestamp.ToDateTimeFromUnixTimestamp()}");
             return string.Join(";", achievementStringCollection)
                          .CalculateMD5Hash();
         }

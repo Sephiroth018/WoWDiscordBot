@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
+using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Entities;
 using MoreLinq;
 
@@ -11,10 +12,12 @@ namespace HeroismDiscordBot.Service.Processors.Consumer
     public class CharacterConsumer
     {
         private readonly IGuild _discordGuild;
+        private readonly Configuration _configuration;
 
-        public CharacterConsumer(IGuild discordGuild)
+        public CharacterConsumer(IGuild discordGuild, Configuration configuration)
         {
             _discordGuild = discordGuild;
+            _configuration = configuration;
         }
 
         public void ConsumeLeftCharacter(Character character)
@@ -30,7 +33,7 @@ namespace HeroismDiscordBot.Service.Processors.Consumer
 
         private void SendDiscordMessage(Character character, string title, DateTime timestamp, DiscordMessageType messageType)
         {
-            var channel = _discordGuild.GetTextChannelAsync(420312901157519362)
+            var channel = _discordGuild.GetTextChannelAsync(_configuration.DiscordMemberChangeChannelId)
                                        .Result;
 
             List<Character> GetAlts(Character c)

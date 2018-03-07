@@ -188,6 +188,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Configuration.cs" />
+    <Compile Include="Common\LongExtensions.cs" />
     <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Entities\Character.cs" />
     <Compile Include="Entities\BotContext.cs" />

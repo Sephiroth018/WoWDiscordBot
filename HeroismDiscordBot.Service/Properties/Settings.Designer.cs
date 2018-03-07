@@ -67,5 +67,23 @@ namespace HeroismDiscordBot.Service.Properties {
                 return ((string)(this["DiscordToken"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WoWRegion {
+            get {
+                return ((string)(this["WoWRegion"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public ulong DiscordMemberChangeChannelId {
+            get {
+                return ((ulong)(this["DiscordMemberChangeChannelId"]));
+            }
+        }
     }
 }

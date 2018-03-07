@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks.Dataflow;
+using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Processors.Consumer;
 using HeroismDiscordBot.Service.Processors.Producer;
 using HeroismDiscordBot.Service.Processors.Transformer;
-using HeroismDiscordBot.Service.Properties;
 using WowDotNetAPI;
 using WowDotNetAPI.Models;
 using Character = HeroismDiscordBot.Service.Entities.Character;
@@ -14,12 +14,14 @@ namespace HeroismDiscordBot.Service.Processors
         private readonly CharacterTransformer _characterTransformer;
         private readonly CharacterConsumer _characterConsumer;
         private readonly CharacterProducer _characterProducer;
+        private readonly Configuration _configuration;
 
-        public GuildMemberProcessor(CharacterTransformer characterTransformer, CharacterConsumer characterConsumer, CharacterProducer characterProducer)
+        public GuildMemberProcessor(CharacterTransformer characterTransformer, CharacterConsumer characterConsumer, CharacterProducer characterProducer, Configuration configuration)
         {
             _characterTransformer = characterTransformer;
             _characterConsumer = characterConsumer;
             _characterProducer = characterProducer;
+            _configuration = configuration;
         }
 
         public void DoWork()
@@ -37,7 +39,7 @@ namespace HeroismDiscordBot.Service.Processors
             characterNormalizationBlock.LinkTo(existingCharacterUpdateAction, new DataflowLinkOptions { PropagateCompletion = true });
             joinedCharacterTransformerBlock.LinkTo(joinedCharacterActionBlock, new DataflowLinkOptions { PropagateCompletion = true });
 
-            getDataBlock.Post((Region.EU, Settings.Default.WoWRealm, Settings.Default.WoWGuild));
+            getDataBlock.Post((_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild));
             getDataBlock.Complete();
 
             leftCharacterActionBlock.Completion.Wait();
