@@ -85,5 +85,14 @@ namespace HeroismDiscordBot.Service.Properties {
                 return ((ulong)(this["DiscordMemberChangeChannelId"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("de_DE")]
+        public string WoWLocale {
+            get {
+                return ((string)(this["WoWLocale"]));
+            }
+        }
     }
 }

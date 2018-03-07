@@ -76,6 +76,9 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SimpleInjector, Version=4.0.12.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.0.12\lib\net45\SimpleInjector.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
@@ -189,22 +192,34 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Configuration.cs" />
+    <Compile Include="Common\DiscordFactory.cs" />
+    <Compile Include="Common\IConfiguration.cs" />
+    <Compile Include="Common\IDiscordFactory.cs" />
+    <Compile Include="Common\IWoWFactory.cs" />
     <Compile Include="Common\LongExtensions.cs" />
     <Compile Include="Common\StringExtensions.cs" />
+    <Compile Include="Common\WoWFactory.cs" />
+    <Compile Include="Consumer\CharacterChangeType.cs" />
+    <Compile Include="Consumer\CharacterDiscordMessageConsumer.cs" />
+    <Compile Include="Consumer\IConsumer.cs" />
     <Compile Include="Entities\Character.cs" />
     <Compile Include="Entities\BotContext.cs" />
-    <Compile Include="Entities\DiscordMessage.cs" />
+    <Compile Include="Entities\CharacterDiscordMessage.cs" />
+    <Compile Include="Entities\BaseDiscordMessage.cs" />
     <Compile Include="Entities\DiscordMessageType.cs" />
     <Compile Include="Entities\Event.cs" />
+    <Compile Include="Entities\EventDiscordMessage.cs" />
+    <Compile Include="Entities\IRepository.cs" />
     <Compile Include="Entities\Invitation.cs" />
     <Compile Include="Entities\InvitationStatus.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Processors\CharacterData.cs" />
-    <Compile Include="Processors\Consumer\CharacterConsumer.cs" />
     <Compile Include="Processors\GuildMemberProcessor.cs" />
-    <Compile Include="Processors\Producer\CharacterProducer.cs" />
-    <Compile Include="Processors\Transformer\CharacterTransformer.cs" />
+    <Compile Include="Processors\IProcessor.cs" />
+    <Compile Include="Producer\CharacterProducer.cs" />
+    <Compile Include="Producer\IProducer.cs" />
+    <Compile Include="Transformer\CharacterDataTransformer.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -219,6 +234,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transformer\ITransformer.cs" />
+    <Compile Include="Transformer\CharacterTransformer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

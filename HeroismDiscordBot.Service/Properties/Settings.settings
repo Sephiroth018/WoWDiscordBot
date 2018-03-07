@@ -23,5 +23,8 @@
     <Setting Name="DiscordMemberChangeChannelId" Type="System.UInt64" Scope="Application">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="WoWLocale" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">de_DE</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

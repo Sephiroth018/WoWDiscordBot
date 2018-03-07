@@ -4,7 +4,7 @@ using WowDotNetAPI;
 
 namespace HeroismDiscordBot.Service.Common
 {
-    public class Configuration
+    public class Configuration : IConfiguration
     {
         public ulong DiscordGuildId => Settings.Default.DiscordGuildId;
         public string DiscordToken => Settings.Default.DiscordToken;
@@ -13,5 +13,7 @@ namespace HeroismDiscordBot.Service.Common
         public Region WoWRegion => (Region)Enum.Parse(typeof(Region), Settings.Default.WoWRegion);
         public string WoWGuild => Settings.Default.WoWGuild;
         public ulong DiscordMemberChangeChannelId => Settings.Default.DiscordMemberChangeChannelId;
+
+        public Locale WoWLocale => (Locale)Enum.Parse(typeof(Locale), Settings.Default.WoWLocale);
     }
 }

@@ -8,6 +8,7 @@ namespace HeroismDiscordBot.Service.Entities
     {
         [Key]
         public int Id { get; set; }
+
         public string Name { get; set; }
         public DateTime Joined { get; set; }
         public virtual ICollection<Specialization> Specializations { get; set; } = new List<Specialization>();
@@ -20,8 +21,10 @@ namespace HeroismDiscordBot.Service.Entities
         public string AchievementsHash { get; set; }
         public string PetsHash { get; set; }
         public int Rank { get; set; }
-        public virtual ICollection<DiscordMessage> Messages { get; set; } = new List<DiscordMessage>();
+        public virtual ICollection<CharacterDiscordMessage> DiscordMessages { get; set; } = new List<CharacterDiscordMessage>();
         public int PlayerId { get; set; }
         public bool IsMain { get; set; }
+
+        public virtual ICollection<Invitation> Invitations { get; set; }
     }
 }

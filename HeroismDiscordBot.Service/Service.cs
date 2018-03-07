@@ -1,67 +1,87 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.ServiceProcess;
-using System.Threading.Tasks;
 using Discord;
-using Discord.WebSocket;
 using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Consumer;
 using HeroismDiscordBot.Service.Entities;
 using HeroismDiscordBot.Service.Processors;
-using HeroismDiscordBot.Service.Processors.Consumer;
-using HeroismDiscordBot.Service.Processors.Producer;
-using HeroismDiscordBot.Service.Processors.Transformer;
-using WowDotNetAPI;
+using HeroismDiscordBot.Service.Producer;
+using HeroismDiscordBot.Service.Transformer;
+using MoreLinq;
+using SimpleInjector;
+using SimpleInjector.Lifestyles;
 
 namespace HeroismDiscordBot.Service
 {
     public partial class Service : ServiceBase
     {
-        private DiscordSocketClient _discordClient;
+        private readonly Container _container;
 
         public Service()
         {
             InitializeComponent();
+            _container = new Container();
+            BuildContainer();
         }
 
         protected override void OnStart(string[] args)
         {
+            BuildContainer();
             StartService();
+        }
+
+        private void BuildContainer()
+        {
+            _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+
+            _container.Register<IConfiguration, Configuration>(Lifestyle.Singleton);
+            _container.Register<IDiscordFactory, DiscordFactory>(Lifestyle.Singleton);
+            _container.Register<IWoWFactory, WoWFactory>(Lifestyle.Scoped);
+            _container.Register(typeof(IConsumer<>), new[] {Assembly.GetExecutingAssembly()}, Lifestyle.Scoped);
+            _container.Register(typeof(IConsumer<,>), new[] { Assembly.GetExecutingAssembly() }, Lifestyle.Scoped);
+            _container.RegisterSingleton<Func<IRepository>>(() => new BotContext());
+            _container.RegisterCollection<IProcessor>(new[] {Assembly.GetExecutingAssembly()});
+            _container.Register(typeof(IProducer<,>), new[] {Assembly.GetExecutingAssembly()}, Lifestyle.Scoped);
+            _container.Register(typeof(ITransformer<,>), new[] {Assembly.GetExecutingAssembly()}, Lifestyle.Scoped);
+
+            _container.Verify();
         }
 
         public void StartService()
         {
-            var configuration = new Configuration();
-            _discordClient = new DiscordSocketClient();
-            _discordClient.LoginAsync(TokenType.Bot, configuration.DiscordToken)
-                          .Wait();
-            _discordClient.StartAsync()
-                          .Wait();
-            _discordClient.GetConnectionsAsync()
-                          .Wait();
-
-            while (_discordClient.ConnectionState != ConnectionState.Connected)
-                Task.Delay(500)
-                    .Wait();
-
-            var discordGuild = _discordClient.GetGuild(configuration.DiscordGuildId);
-
-            //var channel = discordGuild.GetTextChannel(420312901157519362);
-            //var messages = channel.GetMessagesAsync()
-            //                      .ToList()
-            //                      .Result.SelectMany(m => m.ToList());
-            //channel.DeleteMessagesAsync(messages);
-            var wowClient = new WowExplorer(Region.EU, Locale.de_DE, configuration.WoWApiKey);
-            var classInfo = wowClient.GetCharacterClasses();
-            var characterConsumer = new CharacterConsumer(discordGuild, configuration);
-            
-            using (var context = new BotContext())
+            //CleanUp();
+            using (AsyncScopedLifestyle.BeginScope(_container))
             {
-                // just to create the db
-                context.Characters.Any();
-                var characterProducer = new CharacterProducer(context, wowClient);
-                var characterTransformer = new CharacterTransformer(wowClient, classInfo, context, configuration);
-                var processor = new GuildMemberProcessor(characterTransformer, characterConsumer, characterProducer, configuration);
-                processor.DoWork();
-                context.SaveChanges();
+                var processors = _container.GetAllInstances<IProcessor>();
+
+                processors.AsParallel().ForEach(p => p.DoWork());
+            }
+        }
+
+        private void CleanUp()
+        {
+            using (AsyncScopedLifestyle.BeginScope(_container))
+            {
+                var configuration = _container.GetInstance<IConfiguration>();
+                var discordGuild = _container.GetInstance<IDiscordFactory>().GetGuild();
+                var channel = discordGuild.GetTextChannelAsync(configuration.DiscordMemberChangeChannelId).Result;
+                var messages = channel.GetMessagesAsync().Flatten().Result.ToList();
+
+                while (messages.Any())
+                {
+                    channel.DeleteMessagesAsync(messages.Select(m => m.Id)).Wait();
+                    messages = channel.GetMessagesAsync().Flatten().Result.ToList();
+                }
+
+                using (var repository = _container.GetInstance<Func<IRepository>>().Invoke())
+                {
+                    repository.Players.RemoveRange(repository.Players);
+                    repository.Events.RemoveRange(repository.Events);
+
+                    repository.SaveChanges();
+                }
             }
         }
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HeroismDiscordBot.Service.Entities
 {
-    public class DiscordMessage
+    public abstract class BaseDiscordMessage
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
