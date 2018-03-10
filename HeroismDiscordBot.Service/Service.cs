@@ -4,11 +4,8 @@ using System.Reflection;
 using System.ServiceProcess;
 using Discord;
 using HeroismDiscordBot.Service.Common;
-using HeroismDiscordBot.Service.Consumer;
 using HeroismDiscordBot.Service.Entities;
 using HeroismDiscordBot.Service.Processors;
-using HeroismDiscordBot.Service.Producer;
-using HeroismDiscordBot.Service.Transformer;
 using MoreLinq;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -39,12 +36,9 @@ namespace HeroismDiscordBot.Service
             _container.Register<IConfiguration, Configuration>(Lifestyle.Singleton);
             _container.Register<IDiscordFactory, DiscordFactory>(Lifestyle.Singleton);
             _container.Register<IWoWFactory, WoWFactory>(Lifestyle.Scoped);
-            _container.Register(typeof(IConsumer<>), new[] {Assembly.GetExecutingAssembly()}, Lifestyle.Scoped);
-            _container.Register(typeof(IConsumer<,>), new[] { Assembly.GetExecutingAssembly() }, Lifestyle.Scoped);
-            _container.RegisterSingleton<Func<IRepository>>(() => new BotContext());
+            _container.Register<IRepository, BotContext>(Lifestyle.Scoped);
+            _container.RegisterSingleton<Func<IRepository>>(() => _container.GetInstance<IRepository>());
             _container.RegisterCollection<IProcessor>(new[] {Assembly.GetExecutingAssembly()});
-            _container.Register(typeof(IProducer<,>), new[] {Assembly.GetExecutingAssembly()}, Lifestyle.Scoped);
-            _container.Register(typeof(ITransformer<,>), new[] {Assembly.GetExecutingAssembly()}, Lifestyle.Scoped);
 
             _container.Verify();
         }

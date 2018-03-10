@@ -1,12 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HeroismDiscordBot.Service.Entities
+﻿namespace HeroismDiscordBot.Service.Entities
 {
-    public class Specialization
+    public class Specialization : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
-
         public string Name { get; set; }
 
         public int ItemLevel { get; set; }
