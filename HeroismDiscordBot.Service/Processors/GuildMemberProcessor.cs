@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 using Discord;
 using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Entities;
+using HeroismDiscordBot.Service.Logging;
 using MoreLinq;
+using SimpleInjector;
+using SimpleInjector.Lifestyles;
 using WowDotNetAPI;
 using WowDotNetAPI.Models;
 using Character = WowDotNetAPI.Models.Character;
@@ -17,95 +22,126 @@ namespace HeroismDiscordBot.Service.Processors
         private const string MemberLeftTitle = "Gildenmitglied hat uns verlassen!";
         private readonly IConfiguration _configuration;
         private readonly IDiscordFactory _discordclientFactory;
+        private readonly Container _container;
+        private readonly ILogger _logger;
         private readonly Func<IRepository> _repositoryFactory;
         private readonly IWoWFactory _wowClientFactory;
+        private Timer _timer;
 
         public GuildMemberProcessor(IConfiguration configuration,
                                     Func<IRepository> repositoryFactory,
                                     IWoWFactory wowClientFactory,
-                                    IDiscordFactory discordclientFactory)
+                                    IDiscordFactory discordclientFactory,
+                                    Container container,
+                                    ILogger logger)
         {
             _configuration = configuration;
             _repositoryFactory = repositoryFactory;
             _wowClientFactory = wowClientFactory;
             _discordclientFactory = discordclientFactory;
+            _container = container;
+            _logger = logger;
         }
 
-        public void DoWork()
+        public void Start()
         {
-            using (var repository = _repositoryFactory.Invoke())
+            _timer = new Timer();
+            _timer.Elapsed += (sender, args) => DoWork();
+            _timer.Interval = new TimeSpan(1, 0, 0).TotalMilliseconds;
+            _timer.AutoReset = true;
+            _timer.Start();
+            Task.Factory.StartNew(DoWork);
+        }
+
+        public void Stop()
+        {
+            _timer.Stop();
+        }
+
+        private void DoWork()
+        {
+            using (var scope = AsyncScopedLifestyle.BeginScope(_container))
             {
-                repository.Characters.Any();
-
-                var guildMembers = _wowClientFactory.GetClient()
-                                                    .GetGuild(_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild, GuildOptions.GetEverything)
-                                                    .Members
+                try
+                {
+                    using (var repository = _repositoryFactory.Invoke())
+                    {
+                        var guildMembers = _wowClientFactory.GetClient()
+                                                            .GetGuild(_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild, GuildOptions.GetEverything)
+                                                            .Members
+                                                            .ToList();
+                        var guildMembersWithState = GetGuildCharacters(repository, guildMembers)
+                                                    .AsParallel()
+                                                    .WithDegreeOfParallelism(5)
+                                                    .Select(GetWoWCharacterData)
+                                                    .Select(GetGuildMemberState)
                                                     .ToList();
-                var guildMembersWithState = GetGuildCharacters(repository, guildMembers)
-                                            .AsParallel()
-                                            .WithDegreeOfParallelism(5)
-                                            .Select(GetWoWCharacterData)
-                                            .Select(GetGuildMemberState)
-                                            .ToList();
 
-                var characters = guildMembersWithState.Where(data => data.state == GuildMemberState.Left)
-                                                      .Select(data =>
-                                                              {
-                                                                  data.character.Left = DateTime.Now;
-                                                                  return data.character;
-                                                              })
-                                                      .ToList();
+                        var characters = guildMembersWithState.Where(data => data.state == GuildMemberState.Left)
+                                                              .Select(data =>
+                                                                      {
+                                                                          data.character.Left = DateTime.Now;
+                                                                          return data.character;
+                                                                      })
+                                                              .ToList();
 
-                characters.AddRange(guildMembersWithState.Where(data => data.state == GuildMemberState.Joined)
-                                                         .Select(data => CreateNewCharacter(repository, data))
-                                                         .Select(EnrichCharacter));
+                        characters.AddRange(guildMembersWithState.Where(data => data.state == GuildMemberState.Joined)
+                                                                 .Select(data => CreateNewCharacter(repository, data))
+                                                                 .Select(EnrichCharacter));
 
-                characters.AddRange(guildMembersWithState.Where(data => data.state == GuildMemberState.Changed)
-                                                         .Select(EnrichCharacter));
+                        characters.AddRange(guildMembersWithState.Where(data => data.state == GuildMemberState.Changed)
+                                                                 .Select(EnrichCharacter));
 
-                repository.SaveChanges();
+                        repository.SaveChanges();
 
-                characters.Where(c => c.Player == null)
-                          .ForEach(c =>
-                                   {
-                                       var existingCharacter = repository.Characters
-                                                                         .ToList()
-                                                                         .Union(repository.Characters.Local)
-                                                                         .FirstOrDefault(ec => ec.AchievementPoints == c.AchievementPoints
-                                                                                               && ec.AchievementsHash == c.AchievementsHash
-                                                                                               && ec.PetsHash == c.PetsHash);
+                        characters.Where(c => c.Player == null)
+                                  .ForEach(c =>
+                                           {
+                                               var existingCharacter = repository.Characters
+                                                                                 .ToList()
+                                                                                 .Union(repository.Characters.Local)
+                                                                                 .FirstOrDefault(ec => ec.AchievementPoints == c.AchievementPoints
+                                                                                                       && ec.AchievementsHash == c.AchievementsHash
+                                                                                                       && ec.PetsHash == c.PetsHash);
 
-                                       c.Player = existingCharacter?.Player ?? repository.Players.Create();
-                                   });
+                                               c.Player = existingCharacter?.Player ?? repository.Players.Create();
+                                           });
 
-                repository.SaveChanges();
+                        repository.SaveChanges();
 
-                characters.Select(c => c.Player)
-                          .Distinct()
-                          .ForEach(player =>
-                                   {
-                                       var main = player
-                                                  .Characters
-                                                  .GroupBy(c => c.Rank)
-                                                  .OrderBy(c => c.Key)
-                                                  .ToList();
+                        characters.Select(c => c.Player)
+                                  .Distinct()
+                                  .ForEach(player =>
+                                           {
+                                               var main = player
+                                                          .Characters
+                                                          .GroupBy(c => c.Rank)
+                                                          .OrderBy(c => c.Key)
+                                                          .ToList();
 
-                                       player.Characters.ForEach(c => c.IsMain = false);
+                                               player.Characters.ForEach(c => c.IsMain = false);
 
-                                       if (main.First().Count() == 1)
-                                           main.First()
-                                               .First()
-                                               .IsMain = true;
-                                   });
+                                               if (main.First().Count() == 1)
+                                                   main.First()
+                                                       .First()
+                                                       .IsMain = true;
+                                           });
 
-                repository.SaveChanges();
+                        repository.SaveChanges();
 
-                characters.Union(characters.SelectMany(c => c.Player.Characters))
-                          .DistinctBy(c => c.Name)
-                          .Select(data => CreateDiscordMessage(repository, data))
-                          .ForEach(SendDiscordMessage);
+                        characters.Union(characters.SelectMany(c => c.Player.Characters))
+                                  .DistinctBy(c => c.Name)
+                                  .Select(data => CreateDiscordMessage(repository, data))
+                                  .ForEach(SendDiscordMessage);
 
-                repository.SaveChanges();
+                        repository.SaveChanges();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    _logger.LogException(e);
+                }
             }
         }
 
@@ -121,16 +157,6 @@ namespace HeroismDiscordBot.Service.Processors
                      || character.Rank != guildMember.Rank
                      || character.Specializations.All(s => s.Name != guildMember.Character.Specialization?.Name || s.Name == guildMember.Character.Specialization?.Name && s.ItemLevel != characterInfo.Items.AverageItemLevelEquipped))
                 state = GuildMemberState.Changed;
-
-            switch (character?.Name) {
-                case "Derbabu":
-                case "Urdli":
-                    state = GuildMemberState.Changed;
-                    break;
-                case "Vanted":
-                    state = GuildMemberState.Left;
-                    break;
-            }
 
             return (guildMember, characterInfo, character, state);
         }
@@ -249,7 +275,7 @@ namespace HeroismDiscordBot.Service.Processors
             character.Level = characterInfo.Level;
             if (!string.IsNullOrWhiteSpace(guildMember.Character.Specialization?.Name))
             {
-                var specialization = character.Specializations.FirstOrDefault(s => { return s.Name == guildMember.Character.Specialization?.Name; });
+                var specialization = character.Specializations.FirstOrDefault(s => s.Name == guildMember.Character.Specialization?.Name);
 
                 if (specialization == null)
                     character.Specializations.Add(new Specialization
@@ -274,11 +300,15 @@ namespace HeroismDiscordBot.Service.Processors
         private (GuildMember, Character, Entities.Character character, GuildMemberState state) CreateNewCharacter(IRepository repository, (GuildMember guildMember, Character characterInfo, Entities.Character character, GuildMemberState state) data)
         {
             data.character = repository.Characters.Create();
+
             data.character.Joined = DateTime.Now;
             data.character.Name = data.guildMember.Character.Name;
             data.character.Class = _wowClientFactory.GetCharacterClasses()
                                                     .First(c => c.Id == (int)data.characterInfo.Class)
                                                     .Name;
+            data.character.Specializations = new List<Specialization>();
+            data.character.Invitations = new List<Invitation>();
+            data.character.DiscordMessages = new List<CharacterDiscordMessage>();
 
             repository.Characters.Add(data.character);
 

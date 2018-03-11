@@ -88,10 +88,19 @@ namespace HeroismDiscordBot.Service.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("de_DE")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WoWLocale {
             get {
                 return ((string)(this["WoWLocale"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public ulong ErrorMessageTargetId {
+            get {
+                return ((ulong)(this["ErrorMessageTargetId"]));
             }
         }
     }

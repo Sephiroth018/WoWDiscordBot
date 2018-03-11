@@ -2,6 +2,8 @@
 {
     public interface IProcessor
     {
-        void DoWork();
+        void Start();
+
+        void Stop();
     }
 }

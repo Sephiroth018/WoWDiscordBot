@@ -76,6 +76,9 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleInjector, Version=4.0.12.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.4.0.12\lib\net45\SimpleInjector.dll</HintPath>
     </Reference>
@@ -208,8 +211,11 @@
     <Compile Include="Common\DiscordFactory.cs" />
     <Compile Include="Common\IConfiguration.cs" />
     <Compile Include="Common\IDiscordFactory.cs" />
+    <Compile Include="Logging\DiscordPrivateMessageTarget.cs" />
+    <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Common\IWoWFactory.cs" />
     <Compile Include="Common\LongExtensions.cs" />
+    <Compile Include="Logging\NLogProxy.cs" />
     <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Common\WoWFactory.cs" />
     <Compile Include="Entities\BaseEntity.cs" />
@@ -255,6 +261,12 @@
     <None Include="App.Release.config">
       <DependentUpon>App.config</DependentUpon>
       <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
