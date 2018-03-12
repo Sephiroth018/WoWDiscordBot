@@ -1,4 +1,5 @@
-﻿using WowDotNetAPI;
+﻿using Discord;
+using WowDotNetAPI;
 
 namespace HeroismDiscordBot.Service.Common
 {
@@ -21,5 +22,9 @@ namespace HeroismDiscordBot.Service.Common
         Locale WoWLocale { get; }
 
         ulong ErrorMessageTargetId { get;  }
+
+        string DiscordCommandPrefix { get; }
+
+        Color DiscordBotMessageColor { get; }
     }
 }

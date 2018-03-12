@@ -103,5 +103,14 @@ namespace HeroismDiscordBot.Service.Properties {
                 return ((ulong)(this["ErrorMessageTargetId"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("!")]
+        public string DiscordCommandPrefix {
+            get {
+                return ((string)(this["DiscordCommandPrefix"]));
+            }
+        }
     }
 }

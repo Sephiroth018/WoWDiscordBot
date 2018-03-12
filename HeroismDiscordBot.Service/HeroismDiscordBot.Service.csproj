@@ -61,6 +61,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="F23.StringSimilarity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\F23.StringSimilarity.3.0.0\lib\netstandard1.0\F23.StringSimilarity.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.dll</HintPath>
     </Reference>
@@ -208,16 +211,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Configuration.cs" />
-    <Compile Include="Common\DiscordFactory.cs" />
+    <Compile Include="Common\DiscordClientInitializer.cs" />
     <Compile Include="Common\IConfiguration.cs" />
-    <Compile Include="Common\IDiscordFactory.cs" />
+    <Compile Include="DiscordCommands\CommandHandler.cs" />
+    <Compile Include="DiscordCommands\HelpCommand.cs" />
+    <Compile Include="DiscordCommands\WhoisCommand.cs" />
     <Compile Include="Logging\DiscordPrivateMessageTarget.cs" />
     <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Common\IWoWFactory.cs" />
     <Compile Include="Common\LongExtensions.cs" />
     <Compile Include="Logging\NLogProxy.cs" />
     <Compile Include="Common\StringExtensions.cs" />
-    <Compile Include="Common\WoWFactory.cs" />
     <Compile Include="Entities\BaseEntity.cs" />
     <Compile Include="Entities\Character.cs" />
     <Compile Include="Entities\BotContext.cs" />

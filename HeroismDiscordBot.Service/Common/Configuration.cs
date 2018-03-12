@@ -1,4 +1,5 @@
 ﻿using System;
+using Discord;
 using HeroismDiscordBot.Service.Properties;
 using WowDotNetAPI;
 
@@ -23,5 +24,9 @@ namespace HeroismDiscordBot.Service.Common
         public Locale WoWLocale => (Locale)Enum.Parse(typeof(Locale), Settings.Default.WoWLocale);
 
         public ulong ErrorMessageTargetId => Settings.Default.ErrorMessageTargetId;
+
+        public string DiscordCommandPrefix => Settings.Default.DiscordCommandPrefix;
+
+        public Color DiscordBotMessageColor => Color.DarkTeal;
     }
 }

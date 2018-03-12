@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
+using Discord.WebSocket;
 using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Entities;
 using HeroismDiscordBot.Service.Logging;
@@ -21,24 +22,24 @@ namespace HeroismDiscordBot.Service.Processors
         private const string MemberJoinedTitle = "Neuzugang! Willkommen!";
         private const string MemberLeftTitle = "Gildenmitglied hat uns verlassen!";
         private readonly IConfiguration _configuration;
-        private readonly IDiscordFactory _discordclientFactory;
         private readonly Container _container;
+        private readonly DiscordSocketClient _discordClient;
         private readonly ILogger _logger;
         private readonly Func<IRepository> _repositoryFactory;
-        private readonly IWoWFactory _wowClientFactory;
+        private readonly WowExplorer _wowClient;
         private Timer _timer;
 
         public GuildMemberProcessor(IConfiguration configuration,
                                     Func<IRepository> repositoryFactory,
-                                    IWoWFactory wowClientFactory,
-                                    IDiscordFactory discordclientFactory,
+                                    WowExplorer wowClient,
+                                    DiscordSocketClient discordClient,
                                     Container container,
                                     ILogger logger)
         {
             _configuration = configuration;
             _repositoryFactory = repositoryFactory;
-            _wowClientFactory = wowClientFactory;
-            _discordclientFactory = discordclientFactory;
+            _wowClient = wowClient;
+            _discordClient = discordClient;
             _container = container;
             _logger = logger;
         }
@@ -66,10 +67,9 @@ namespace HeroismDiscordBot.Service.Processors
                 {
                     using (var repository = _repositoryFactory.Invoke())
                     {
-                        var guildMembers = _wowClientFactory.GetClient()
-                                                            .GetGuild(_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild, GuildOptions.GetEverything)
-                                                            .Members
-                                                            .ToList();
+                        var guildMembers = _wowClient.GetGuild(_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild, GuildOptions.GetEverything)
+                                                     .Members
+                                                     .ToList();
                         var guildMembersWithState = GetGuildCharacters(repository, guildMembers)
                                                     .AsParallel()
                                                     .WithDegreeOfParallelism(5)
@@ -85,8 +85,10 @@ namespace HeroismDiscordBot.Service.Processors
                                                                       })
                                                               .ToList();
 
+                        var characterClasses = _wowClient.GetCharacterClasses();
+
                         characters.AddRange(guildMembersWithState.Where(data => data.state == GuildMemberState.Joined)
-                                                                 .Select(data => CreateNewCharacter(repository, data))
+                                                                 .Select(data => CreateNewCharacter(repository, data, characterClasses))
                                                                  .Select(EnrichCharacter));
 
                         characters.AddRange(guildMembersWithState.Where(data => data.state == GuildMemberState.Changed)
@@ -136,7 +138,6 @@ namespace HeroismDiscordBot.Service.Processors
 
                         repository.SaveChanges();
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -164,16 +165,16 @@ namespace HeroismDiscordBot.Service.Processors
         private (GuildMember, Character, Entities.Character) GetWoWCharacterData((GuildMember guildMember, Entities.Character character) data)
         {
             var (guildMember, character) = data;
-            var characterInfo = _wowClientFactory.GetClient().GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, guildMember.Character.Name, CharacterOptions.GetEverything);
+            var characterInfo = _wowClient.GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, guildMember.Character.Name, CharacterOptions.GetEverything);
 
             return (guildMember, characterInfo, character);
         }
 
         private void SendDiscordMessage((CharacterDiscordMessage message, Embed messageData) data)
         {
-            var channel = _discordclientFactory.GetGuild()
-                                               .GetTextChannelAsync(_configuration.DiscordMemberChangeChannelId)
-                                               .Result;
+            var guild = _discordClient.GetGuild(_configuration.DiscordGuildId) as IGuild;
+            var channel = guild.GetTextChannelAsync(_configuration.DiscordMemberChangeChannelId)
+                               .Result;
 
             if (data.message.Id == default(int))
             {
@@ -297,15 +298,15 @@ namespace HeroismDiscordBot.Service.Processors
             return character;
         }
 
-        private (GuildMember, Character, Entities.Character character, GuildMemberState state) CreateNewCharacter(IRepository repository, (GuildMember guildMember, Character characterInfo, Entities.Character character, GuildMemberState state) data)
+        private (GuildMember, Character, Entities.Character character, GuildMemberState state) CreateNewCharacter(IRepository repository, (GuildMember guildMember, Character characterInfo, Entities.Character character, GuildMemberState state) data, IEnumerable<CharacterClassInfo> characterClasses)
         {
             data.character = repository.Characters.Create();
 
             data.character.Joined = DateTime.Now;
             data.character.Name = data.guildMember.Character.Name;
-            data.character.Class = _wowClientFactory.GetCharacterClasses()
-                                                    .First(c => c.Id == (int)data.characterInfo.Class)
-                                                    .Name;
+            data.character.Class = characterClasses
+                                             .First(c => c.Id == (int)data.characterInfo.Class)
+                                             .Name;
             data.character.Specializations = new List<Specialization>();
             data.character.Invitations = new List<Invitation>();
             data.character.DiscordMessages = new List<CharacterDiscordMessage>();

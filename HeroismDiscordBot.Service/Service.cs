@@ -4,15 +4,23 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using F23.StringSimilarity;
+using F23.StringSimilarity.Interfaces;
 using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.DiscordCommands;
 using HeroismDiscordBot.Service.Entities;
 using HeroismDiscordBot.Service.Logging;
 using HeroismDiscordBot.Service.Processors;
 using MoreLinq;
 using NLog;
+using NLog.Config;
 using NLog.Targets;
 using SimpleInjector;
+using SimpleInjector.Diagnostics;
 using SimpleInjector.Lifestyles;
+using WowDotNetAPI;
 using ILogger = HeroismDiscordBot.Service.Logging.ILogger;
 
 namespace HeroismDiscordBot.Service
@@ -20,8 +28,8 @@ namespace HeroismDiscordBot.Service
     public partial class Service : ServiceBase
     {
         private readonly Container _container;
-        private Scope _scope;
         private IEnumerable<IProcessor> _processors;
+        private Scope _scope;
 
         public Service()
         {
@@ -41,15 +49,32 @@ namespace HeroismDiscordBot.Service
             _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
             Target.Register<DiscordPrivateMessageTarget>("DiscordPrivateMessage");
-            NLog.Config.ConfigurationItemFactory.Default.CreateInstance = type => _container.GetRegistration(type)?.GetInstance() ?? Activator.CreateInstance(type);
+            ConfigurationItemFactory.Default.CreateInstance = type => _container.GetRegistration(type)?.GetInstance() ?? Activator.CreateInstance(type);
 
             _container.RegisterConditional(typeof(ILogger), context => typeof(NLogProxy<>).MakeGenericType(context.Consumer.ImplementationType), Lifestyle.Singleton, context => true);
             _container.Register<IConfiguration, Configuration>(Lifestyle.Singleton);
-            _container.Register<IDiscordFactory, DiscordFactory>(Lifestyle.Singleton);
-            _container.Register<IWoWFactory, WoWFactory>(Lifestyle.Scoped);
-            _container.Register<IRepository, BotContext>(Lifestyle.Scoped);
+            _container.Register(() =>
+                                {
+                                    var configuration = _container.GetInstance<IConfiguration>();
+                                    return new WowExplorer(configuration.WoWRegion, configuration.WoWLocale, configuration.WoWApiKey);
+                                },
+                                Lifestyle.Scoped);
+            _container.Register<IRepository, BotContext>(Lifestyle.Transient);
             _container.RegisterSingleton<Func<IRepository>>(() => _container.GetInstance<IRepository>());
             _container.RegisterCollection<IProcessor>(new[] { Assembly.GetExecutingAssembly() });
+            _container.RegisterSingleton(() => DiscordClientInitializer.Initialize(_container).Result);
+            _container.RegisterSingleton(() => new CommandService(new CommandServiceConfig
+                                                                  {
+                                                                      CaseSensitiveCommands = false,
+                                                                      DefaultRunMode = RunMode.Async
+                                                                  }));
+            _container.RegisterSingleton<CommandHandler>();
+            _container.RegisterSingleton<IServiceProvider>(() => _container);
+            _container.RegisterSingleton<IMetricStringDistance, Damerau>();
+
+            _container.GetRegistration(typeof(IRepository))
+                      .Registration
+                      .SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent, "Handled by application code");
 
             _container.Verify();
         }
@@ -58,6 +83,8 @@ namespace HeroismDiscordBot.Service
         {
             //CleanUp();
             _scope = AsyncScopedLifestyle.BeginScope(_container);
+
+            _container.GetInstance<CommandHandler>();
 
             _processors = _container.GetAllInstances<IProcessor>()
                                     .ToList();
@@ -70,7 +97,8 @@ namespace HeroismDiscordBot.Service
             using (AsyncScopedLifestyle.BeginScope(_container))
             {
                 var configuration = _container.GetInstance<IConfiguration>();
-                var discordGuild = _container.GetInstance<IDiscordFactory>().GetGuild();
+                var discordClient = _container.GetInstance<DiscordSocketClient>();
+                var discordGuild = discordClient.GetGuild(configuration.DiscordGuildId) as IGuild;
                 var channel = discordGuild.GetTextChannelAsync(configuration.DiscordMemberChangeChannelId).Result;
                 var messages = channel.GetMessagesAsync().Flatten().Result.ToList();
 
@@ -83,6 +111,7 @@ namespace HeroismDiscordBot.Service
                 using (var repository = _container.GetInstance<Func<IRepository>>().Invoke())
                 {
                     repository.Players.RemoveRange(repository.Players);
+                    repository.Characters.RemoveRange(repository.Characters);
                     repository.Events.RemoveRange(repository.Events);
 
                     repository.SaveChanges();
