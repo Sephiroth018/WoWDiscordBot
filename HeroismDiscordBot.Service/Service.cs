@@ -53,7 +53,7 @@ namespace HeroismDiscordBot.Service
 
             _container.RegisterConditional(typeof(ILogger), context => typeof(NLogProxy<>).MakeGenericType(context.Consumer.ImplementationType), Lifestyle.Singleton, context => true);
             _container.Register<IConfiguration, Configuration>(Lifestyle.Singleton);
-            _container.Register(() =>
+            _container.Register<IExplorer>(() =>
                                 {
                                     var configuration = _container.GetInstance<IConfiguration>();
                                     return new WowExplorer(configuration.WoWRegion, configuration.WoWLocale, configuration.WoWApiKey);

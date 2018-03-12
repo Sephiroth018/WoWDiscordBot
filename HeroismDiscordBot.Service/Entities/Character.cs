@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HeroismDiscordBot.Service.Entities
 {
@@ -34,5 +35,17 @@ namespace HeroismDiscordBot.Service.Entities
         public bool IsMain { get; set; }
 
         public virtual ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
+
+        public string GetNameAndDescription()
+        {
+            var result = $"{(IsMain ? "**Main: **" : string.Empty)}{Name}: {Class}";
+
+            if (Specializations.Any())
+            {
+                result = $"{result} {string.Join(",", Specializations.Select(s => s.GetDescription()))}";
+            }
+
+            return result;
+        }
     }
 }

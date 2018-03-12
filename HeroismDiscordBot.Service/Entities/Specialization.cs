@@ -9,5 +9,10 @@
         public string Role { get; set; }
 
         public virtual Character Character { get; set; }
+
+        public string GetDescription()
+        {
+            return $"{Name}-{Role} ({ItemLevel})";
+        }
     }
 }

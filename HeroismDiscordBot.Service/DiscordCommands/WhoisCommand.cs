@@ -54,10 +54,10 @@ namespace HeroismDiscordBot.Service.DiscordCommands
             embed.AddInlineField("Klasse", character.Class);
 
             if (alts.Any())
-                embed.AddField("Alt(s)", string.Join(Environment.NewLine, alts.Select(c => $"{(c.IsMain ? "**Main: **" : string.Empty)}{c.Name} - {string.Join(", ", c.Specializations.Select(s => s.Role))}")));
+                embed.AddField("Alt(s)", string.Join(Environment.NewLine, alts.Select(c => c.GetNameAndDescription())));
 
             if (character.Specializations.Any())
-                embed.AddField("Spec(s)", string.Join(Environment.NewLine, character.Specializations.Select(s => $"{s.Role} - {s.Name} ({s.ItemLevel})")));
+                embed.AddField("Spec(s)", string.Join(Environment.NewLine, character.Specializations.Select(s => s.GetDescription())));
 
             return embed.Build();
         }

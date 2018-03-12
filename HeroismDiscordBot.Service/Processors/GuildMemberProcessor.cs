@@ -26,12 +26,12 @@ namespace HeroismDiscordBot.Service.Processors
         private readonly DiscordSocketClient _discordClient;
         private readonly ILogger _logger;
         private readonly Func<IRepository> _repositoryFactory;
-        private readonly WowExplorer _wowClient;
+        private readonly IExplorer _wowClient;
         private Timer _timer;
 
         public GuildMemberProcessor(IConfiguration configuration,
                                     Func<IRepository> repositoryFactory,
-                                    WowExplorer wowClient,
+                                    IExplorer wowClient,
                                     DiscordSocketClient discordClient,
                                     Container container,
                                     ILogger logger)
@@ -67,9 +67,9 @@ namespace HeroismDiscordBot.Service.Processors
                 {
                     using (var repository = _repositoryFactory.Invoke())
                     {
-                        var guildMembers = _wowClient.GetGuild(_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild, GuildOptions.GetEverything)
-                                                     .Members
-                                                     .ToList();
+                        var guildMembers = RetryHelper.WithRetry(() => _wowClient.GetGuild(_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild, GuildOptions.GetEverything), 3)
+                                                      .Members
+                                                      .ToList();
                         var guildMembersWithState = GetGuildCharacters(repository, guildMembers)
                                                     .AsParallel()
                                                     .WithDegreeOfParallelism(5)
@@ -78,14 +78,15 @@ namespace HeroismDiscordBot.Service.Processors
                                                     .ToList();
 
                         var characters = guildMembersWithState.Where(data => data.state == GuildMemberState.Left)
-                                                              .Select(data =>
+                                                              .Select(EnrichCharacter)
+                                                              .Select(c =>
                                                                       {
-                                                                          data.character.Left = DateTime.Now;
-                                                                          return data.character;
+                                                                          c.Left = DateTime.Now;
+                                                                          return c;
                                                                       })
                                                               .ToList();
 
-                        var characterClasses = _wowClient.GetCharacterClasses();
+                        var characterClasses = RetryHelper.WithRetry(() => _wowClient.GetCharacterClasses(), 3);
 
                         characters.AddRange(guildMembersWithState.Where(data => data.state == GuildMemberState.Joined)
                                                                  .Select(data => CreateNewCharacter(repository, data, characterClasses))
@@ -131,10 +132,10 @@ namespace HeroismDiscordBot.Service.Processors
 
                         repository.SaveChanges();
 
-                        characters.Union(characters.SelectMany(c => c.Player.Characters))
-                                  .DistinctBy(c => c.Name)
-                                  .Select(data => CreateDiscordMessage(repository, data))
-                                  .ForEach(SendDiscordMessage);
+                        guildMembersWithState.Where(data => data.state == GuildMemberState.Joined || data.state == GuildMemberState.Left)
+                                             .Select(data => data.character)
+                                             .Select(data => CreateDiscordMessage(repository, data))
+                                             .ForEach(SendDiscordMessage);
 
                         repository.SaveChanges();
                     }
@@ -151,13 +152,23 @@ namespace HeroismDiscordBot.Service.Processors
             var (guildMember, characterInfo, character) = data;
             var state = GuildMemberState.Unchanged;
             if (guildMember == null)
+            {
                 state = GuildMemberState.Left;
-            else if (character == null)
+            }
+            else if (character == null || character.Left.HasValue)
+            {
+                if (character != null)
+                {
+                    character.Left = null;
+                    character.Joined = DateTime.Now;
+                }
+
                 state = GuildMemberState.Joined;
-            else if (character.Level != characterInfo.Level
-                     || character.Rank != guildMember.Rank
-                     || character.Specializations.All(s => s.Name != guildMember.Character.Specialization?.Name || s.Name == guildMember.Character.Specialization?.Name && s.ItemLevel != characterInfo.Items.AverageItemLevelEquipped))
+            }
+            else if (characterInfo.LastModified.ToDateTimeFromUnixTimestamp() > character.LastUpdate)
+            {
                 state = GuildMemberState.Changed;
+            }
 
             return (guildMember, characterInfo, character, state);
         }
@@ -165,7 +176,7 @@ namespace HeroismDiscordBot.Service.Processors
         private (GuildMember, Character, Entities.Character) GetWoWCharacterData((GuildMember guildMember, Entities.Character character) data)
         {
             var (guildMember, character) = data;
-            var characterInfo = _wowClient.GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, guildMember.Character.Name, CharacterOptions.GetEverything);
+            var characterInfo = RetryHelper.WithRetry(() => _wowClient.GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, guildMember.Character.Name, CharacterOptions.GetEverything), 3);
 
             return (guildMember, characterInfo, character);
         }
@@ -234,10 +245,10 @@ namespace HeroismDiscordBot.Service.Processors
             embed.AddInlineField("Klasse", character.Class);
 
             if (alts.Any())
-                embed.AddField("Alt(s)", string.Join(Environment.NewLine, alts.Select(c => $"{(c.IsMain ? "**Main: **" : string.Empty)}{c.Name} - {string.Join(", ", c.Specializations.Select(s => s.Role))}")));
+                embed.AddField("Alt(s)", string.Join(Environment.NewLine, alts.Select(c => c.GetNameAndDescription())));
 
             if (character.Specializations.Any())
-                embed.AddField("Spec(s)", string.Join(Environment.NewLine, character.Specializations.Select(s => $"{s.Role} - {s.Name} ({s.ItemLevel})")));
+                embed.AddField("Spec(s)", string.Join(Environment.NewLine, character.Specializations.Select(s => s.GetDescription())));
 
             return embed.Build();
         }
@@ -268,22 +279,24 @@ namespace HeroismDiscordBot.Service.Processors
                          .CalculateMD5Hash();
         }
 
-        private Entities.Character EnrichCharacter((GuildMember, Character, Entities.Character character, GuildMemberState state) data)
+        private Entities.Character EnrichCharacter((GuildMember, Character, Entities.Character, GuildMemberState) data)
         {
             var (guildMember, characterInfo, character, _) = data;
 
-            character.LastUpdate = DateTime.Now;
+            character.LastUpdate = characterInfo.LastModified.ToDateTimeFromUnixTimestamp();
             character.Level = characterInfo.Level;
-            if (!string.IsNullOrWhiteSpace(guildMember.Character.Specialization?.Name))
+
+            var talentSet = characterInfo.Talents.FirstOrDefault(t => t.Selected);
+            if (talentSet != null)
             {
-                var specialization = character.Specializations.FirstOrDefault(s => s.Name == guildMember.Character.Specialization?.Name);
+                var specialization = character.Specializations.FirstOrDefault(s => s.Name == talentSet.Spec.Name);
 
                 if (specialization == null)
                     character.Specializations.Add(new Specialization
                                                   {
-                                                      Name = guildMember.Character.Specialization?.Name,
+                                                      Name = talentSet.Spec.Name,
                                                       ItemLevel = characterInfo.Items.AverageItemLevelEquipped,
-                                                      Role = guildMember.Character.Specialization?.Role
+                                                      Role = talentSet.Spec.Role
                                                   });
                 else
                     specialization.ItemLevel = characterInfo.Items.AverageItemLevelEquipped;
@@ -298,15 +311,17 @@ namespace HeroismDiscordBot.Service.Processors
             return character;
         }
 
-        private (GuildMember, Character, Entities.Character character, GuildMemberState state) CreateNewCharacter(IRepository repository, (GuildMember guildMember, Character characterInfo, Entities.Character character, GuildMemberState state) data, IEnumerable<CharacterClassInfo> characterClasses)
+        private (GuildMember, Character, Entities.Character character, GuildMemberState state) CreateNewCharacter(IRepository repository,
+                                                                                                                  (GuildMember guildMember, Character characterInfo, Entities.Character character, GuildMemberState state) data,
+                                                                                                                  IEnumerable<CharacterClassInfo> characterClasses)
         {
             data.character = repository.Characters.Create();
 
             data.character.Joined = DateTime.Now;
             data.character.Name = data.guildMember.Character.Name;
             data.character.Class = characterClasses
-                                             .First(c => c.Id == (int)data.characterInfo.Class)
-                                             .Name;
+                                   .First(c => c.Id == (int)data.characterInfo.Class)
+                                   .Name;
             data.character.Specializations = new List<Specialization>();
             data.character.Invitations = new List<Invitation>();
             data.character.DiscordMessages = new List<CharacterDiscordMessage>();
