@@ -37,12 +37,22 @@ namespace HeroismDiscordBot.Service.DiscordCommands
                                     {
                                         builder.AddField(fieldBuilder =>
                                                          {
-                                                             fieldBuilder.Name = string.Join(", ", c.Aliases);
-                                                             fieldBuilder.Value = $"Beschreibung: {c.Summary}";
-                                                             //TODO provide example
+                                                             var name = c.Name;
 
                                                              if (c.Parameters.Any())
-                                                                 fieldBuilder.Value = $"Parameter: {string.Join(", ", c.Parameters.Select(p => p.Name))}{Environment.NewLine}" + fieldBuilder.Value;
+                                                                 name += $" {string.Join(" ", c.Parameters.Select(p => $"<{p.Name}>"))}";
+
+                                                             fieldBuilder.Name = name;
+                                                             if (c.Parameters.Any())
+                                                                 fieldBuilder.Value = $"{string.Join(Environment.NewLine, c.Parameters.Select(p => $"Parameter {p.Name}: {p.Summary}"))}{Environment.NewLine}";
+
+                                                             var aliases = c.Aliases.Where(a => a != c.Name)
+                                                                            .ToList();
+                                                             if (aliases.Any())
+                                                                 fieldBuilder.Value += $"Aliases: {string.Join(", ", aliases)}{Environment.NewLine}";
+
+                                                             fieldBuilder.Value += $"Beschreibung: {c.Summary}";
+                                                             //TODO provide example
                                                          });
                                     });
 

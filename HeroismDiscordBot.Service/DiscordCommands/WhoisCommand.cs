@@ -25,18 +25,18 @@ namespace HeroismDiscordBot.Service.DiscordCommands
         }
 
         [Command("whois")]
-        [Summary("Gibt alle gespeicherten Informationen zu dem angegebenen WoW-Charakter aus.")]
+        [Summary("Gibt alle gespeicherten Informationen zu dem angegebenen WoW-Charakter aus. Tippfehler werden bis zu einem gewissen Grad ignoriert.")]
         public async Task Whois([Remainder] [Summary("Der Name des WoW-Charakters")]
-                                string searchText)
+                                string name)
         {
             using (var repository = _repositoryFactory.Invoke())
             {
                 var characters = repository.Characters
                                            .Where(c => !c.Left.HasValue)
                                            .ToList()
-                                           .Where(c => _distanceCalculator.Distance(c.Name, searchText) < searchText.Length / 2);
+                                           .Where(c => _distanceCalculator.Distance(c.Name.ToLowerInvariant(), name.ToLowerInvariant()) < name.Length / 2);
 
-                var messages = characters.Select(c => BuildPlayerChangedMessage(c, $"**Suchtext:** {searchText}"));
+                var messages = characters.Select(c => BuildPlayerChangedMessage(c, $"**Suchtext:** {name}"));
 
                 await Task.WhenAll(messages.Select(m => ReplyAsync("", false, m)));
             }
