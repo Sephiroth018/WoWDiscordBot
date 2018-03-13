@@ -238,6 +238,8 @@
     <Compile Include="Processors\GuildMemberProcessor.cs" />
     <Compile Include="Processors\GuildMemberState.cs" />
     <Compile Include="Processors\IProcessor.cs" />
+    <Compile Include="Processors\IProcessorManager.cs" />
+    <Compile Include="Processors\ProcessorManager.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

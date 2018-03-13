@@ -28,8 +28,8 @@ namespace HeroismDiscordBot.Service
     public partial class Service : ServiceBase
     {
         private readonly Container _container;
-        private IEnumerable<IProcessor> _processors;
-        private Scope _scope;
+        private readonly NLogProxy<Service> _logger = new NLogProxy<Service>();
+        private List<IProcessorManager> _processorManagers;
 
         public Service()
         {
@@ -40,8 +40,16 @@ namespace HeroismDiscordBot.Service
 
         protected override void OnStart(string[] args)
         {
-            BuildContainer();
-            StartService();
+            try
+            {
+                BuildContainer();
+                StartService();
+            }
+            catch (Exception e)
+            {
+                _logger.LogException(e);
+                throw;
+            }
         }
 
         private void BuildContainer()
@@ -54,14 +62,20 @@ namespace HeroismDiscordBot.Service
             _container.RegisterConditional(typeof(ILogger), context => typeof(NLogProxy<>).MakeGenericType(context.Consumer.ImplementationType), Lifestyle.Singleton, context => true);
             _container.Register<IConfiguration, Configuration>(Lifestyle.Singleton);
             _container.Register<IExplorer>(() =>
-                                {
-                                    var configuration = _container.GetInstance<IConfiguration>();
-                                    return new WowExplorer(configuration.WoWRegion, configuration.WoWLocale, configuration.WoWApiKey);
-                                },
-                                Lifestyle.Scoped);
+                                           {
+                                               var configuration = _container.GetInstance<IConfiguration>();
+                                               return new WowExplorer(configuration.WoWRegion, configuration.WoWLocale, configuration.WoWApiKey);
+                                           },
+                                           Lifestyle.Scoped);
             _container.Register<IRepository, BotContext>(Lifestyle.Transient);
             _container.RegisterSingleton<Func<IRepository>>(() => _container.GetInstance<IRepository>());
             _container.RegisterCollection<IProcessor>(new[] { Assembly.GetExecutingAssembly() });
+
+            Assembly.GetExecutingAssembly()
+                    .GetExportedTypes()
+                    .Where(t => t.GetInterfaces().Any(i => i == typeof(IProcessor)))
+                    .Select(t => typeof(ProcessorManager<>).MakeGenericType(t))
+                    .ForEach(t => _container.Register(typeof(IProcessorManager), t, Lifestyle.Singleton));
             _container.RegisterSingleton(() => DiscordClientInitializer.Initialize(_container).Result);
             _container.RegisterSingleton(() => new CommandService(new CommandServiceConfig
                                                                   {
@@ -82,14 +96,25 @@ namespace HeroismDiscordBot.Service
         public void StartService()
         {
             //CleanUp();
-            _scope = AsyncScopedLifestyle.BeginScope(_container);
-
             _container.GetInstance<CommandHandler>();
 
-            _processors = _container.GetAllInstances<IProcessor>()
-                                    .ToList();
+            _processorManagers = GetProcessorManagers();
 
-            _processors.ForEach(p => p.Start());
+            _processorManagers.AsParallel().ForEach(p => p.Start());
+        }
+
+        private List<IProcessorManager> GetProcessorManagers()
+        {
+            List<IProcessorManager> processors;
+            using (AsyncScopedLifestyle.BeginScope(_container))
+            {
+                processors = _container.GetAllInstances<IProcessor>()
+                                       .Select(p => typeof(ProcessorManager<>).MakeGenericType(p.GetType()))
+                                       .Select(t => _container.GetInstance(t) as IProcessorManager)
+                                       .ToList();
+            }
+
+            return processors;
         }
 
         private void CleanUp()
@@ -121,14 +146,24 @@ namespace HeroismDiscordBot.Service
 
         protected override void OnStop()
         {
-            StopService();
+            try
+            {
+                StopService();
+            }
+            catch (Exception e)
+            {
+                _logger.LogException(e);
+                throw;
+            }
         }
 
         private void StopService()
         {
-            _processors.AsParallel().ForEach(p => p.Stop());
+            _processorManagers.AsParallel().ForEach(p => p.Stop());
 
-            _scope.Dispose();
+            var discordClient = _container.GetInstance<DiscordSocketClient>();
+            DiscordClientInitializer.Disconnect(discordClient).Wait();
+
             LogManager.Shutdown();
         }
     }

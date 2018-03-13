@@ -9,7 +9,7 @@ namespace HeroismDiscordBot.Service.Common
 {
     public class DiscordClientInitializer
     {
-        private static readonly TaskCompletionSource<bool> CompletionSource = new TaskCompletionSource<bool>();
+        private static TaskCompletionSource<bool> _completionSource = new TaskCompletionSource<bool>();
 
         public static async Task<DiscordSocketClient> Initialize(Container container)
         {
@@ -17,9 +17,13 @@ namespace HeroismDiscordBot.Service.Common
             await discordClient.LoginAsync(TokenType.Bot, container.GetInstance<IConfiguration>().DiscordToken);
             await discordClient.StartAsync();
 
-            discordClient.Ready += DiscordClientOnReady;
+            discordClient.Ready += () =>
+                                   {
+                                       _completionSource.TrySetResult(true);
+                                       return Task.CompletedTask;
+                                   };
 
-            await CompletionSource.Task;
+            await _completionSource.Task;
 
             var commandService = container.GetInstance<CommandService>();
             await commandService.AddModulesAsync(Assembly.GetEntryAssembly());
@@ -27,10 +31,19 @@ namespace HeroismDiscordBot.Service.Common
             return discordClient;
         }
 
-        private static Task DiscordClientOnReady()
+        public static async Task Disconnect(DiscordSocketClient client)
         {
-            CompletionSource.TrySetResult(true);
-            return Task.CompletedTask;
+            _completionSource = new TaskCompletionSource<bool>();
+
+            client.Disconnected += e =>
+                                   {
+                                       _completionSource.TrySetResult(true);
+                                       return Task.CompletedTask;
+                                   };
+
+            await client.StopAsync();
+
+            await _completionSource.Task;
         }
     }
 }
