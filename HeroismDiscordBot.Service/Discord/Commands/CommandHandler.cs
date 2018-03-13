@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 using HeroismDiscordBot.Service.Common;
-using SimpleInjector;
 
-namespace HeroismDiscordBot.Service.DiscordCommands
+namespace HeroismDiscordBot.Service.Discord.Commands
 {
     public class CommandHandler
     {

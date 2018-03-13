@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Discord;
 using Discord.WebSocket;
@@ -12,6 +13,7 @@ using Character = WowDotNetAPI.Models.Character;
 
 namespace HeroismDiscordBot.Service.Processors
 {
+    [SuppressMessage("ReSharper", "UnusedTupleComponentInReturnValue")]
     public class GuildMemberProcessor : IProcessor
     {
         private const string MemberJoinedTitle = "Neuzugang! Willkommen!";
@@ -69,13 +71,16 @@ namespace HeroismDiscordBot.Service.Processors
                 characters.Where(c => c.Player == null)
                           .ForEach(c =>
                                    {
+                                       // ReSharper disable once AccessToDisposedClosure
                                        var existingCharacter = repository.Characters
                                                                          .ToList()
+                                                                         // ReSharper disable once AccessToDisposedClosure
                                                                          .Union(repository.Characters.Local)
                                                                          .FirstOrDefault(ec => ec.AchievementPoints == c.AchievementPoints
                                                                                                && ec.AchievementsHash == c.AchievementsHash
                                                                                                && ec.PetsHash == c.PetsHash);
 
+                                       // ReSharper disable once AccessToDisposedClosure
                                        c.Player = existingCharacter?.Player ?? repository.Players.Create();
                                    });
 
@@ -103,6 +108,7 @@ namespace HeroismDiscordBot.Service.Processors
 
                 guildMembersWithState.Where(data => data.state == GuildMemberState.Joined || data.state == GuildMemberState.Left)
                                      .Select(data => data.character)
+                                     // ReSharper disable once AccessToDisposedClosure
                                      .Select(data => CreateDiscordMessage(repository, data))
                                      .ForEach(SendDiscordMessage);
 
@@ -161,7 +167,8 @@ namespace HeroismDiscordBot.Service.Processors
             {
                 var sentMessage = channel.GetMessageAsync((ulong)data.message.MessageId)
                                          .Result as IUserMessage;
-                sentMessage.ModifyAsync(m => m.Embed = data.messageData).Wait();
+
+                sentMessage?.ModifyAsync(m => m.Embed = data.messageData).Wait();
             }
         }
 

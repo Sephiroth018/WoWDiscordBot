@@ -8,7 +8,7 @@ using F23.StringSimilarity.Interfaces;
 using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Entities;
 
-namespace HeroismDiscordBot.Service.DiscordCommands
+namespace HeroismDiscordBot.Service.Discord.Commands
 {
     [Name("Whois")]
     public class WhoisCommand : ModuleBase<SocketCommandContext>
@@ -34,7 +34,7 @@ namespace HeroismDiscordBot.Service.DiscordCommands
                 var characters = repository.Characters
                                            .Where(c => !c.Left.HasValue)
                                            .ToList()
-                                           .Where(c => _distanceCalculator.Distance(c.Name.ToLowerInvariant(), name.ToLowerInvariant()) < name.Length / 2);
+                                           .Where(c => _distanceCalculator.Distance(c.Name.ToLowerInvariant(), name.ToLowerInvariant()) < name.Length / 2.0);
 
                 var messages = characters.Select(c => BuildPlayerChangedMessage(c, $"**Suchtext:** {name}"));
 

@@ -5,12 +5,11 @@ namespace HeroismDiscordBot.Service.Logging
 {
     public class NLogProxy<T> : ILogger
     {
-        private static readonly NLog.ILogger logger =
-            LogManager.GetLogger(typeof(T).FullName);
+        private static readonly NLog.ILogger Logger = LogManager.GetLogger(typeof(T).FullName);
 
         public void LogException(Exception ex)
         {
-            logger.Error(ex);
+            Logger.Error(ex);
         }
     }
 }

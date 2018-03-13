@@ -3,10 +3,13 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using HeroismDiscordBot.Service.Common;
+using JetBrains.Annotations;
 using SimpleInjector;
 
-namespace HeroismDiscordBot.Service.Common
+namespace HeroismDiscordBot.Service.Discord
 {
+    [UsedImplicitly]
     public class DiscordClientInitializer
     {
         private static TaskCompletionSource<bool> _completionSource = new TaskCompletionSource<bool>();

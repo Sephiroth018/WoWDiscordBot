@@ -9,7 +9,8 @@ using Discord.WebSocket;
 using F23.StringSimilarity;
 using F23.StringSimilarity.Interfaces;
 using HeroismDiscordBot.Service.Common;
-using HeroismDiscordBot.Service.DiscordCommands;
+using HeroismDiscordBot.Service.Discord;
+using HeroismDiscordBot.Service.Discord.Commands;
 using HeroismDiscordBot.Service.Entities;
 using HeroismDiscordBot.Service.Logging;
 using HeroismDiscordBot.Service.Processors;
@@ -117,6 +118,7 @@ namespace HeroismDiscordBot.Service
             return processors;
         }
 
+        // ReSharper disable once UnusedMember.Local
         private void CleanUp()
         {
             using (AsyncScopedLifestyle.BeginScope(_container))

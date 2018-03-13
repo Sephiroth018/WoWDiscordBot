@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HeroismDiscordBot.Service.Entities
+﻿namespace HeroismDiscordBot.Service.Entities
 {
     public abstract class BaseDiscordMessage : BaseEntity
     {

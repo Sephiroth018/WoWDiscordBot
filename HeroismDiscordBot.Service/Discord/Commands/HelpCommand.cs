@@ -6,7 +6,7 @@ using Discord.Commands;
 using HeroismDiscordBot.Service.Common;
 using MoreLinq;
 
-namespace HeroismDiscordBot.Service.DiscordCommands
+namespace HeroismDiscordBot.Service.Discord.Commands
 {
     [Name("Help")]
     public class HelpCommand : ModuleBase<SocketCommandContext>
