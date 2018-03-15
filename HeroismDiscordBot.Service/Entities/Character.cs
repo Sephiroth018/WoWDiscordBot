@@ -28,7 +28,7 @@ namespace HeroismDiscordBot.Service.Entities
 
         public string PetsHash { get; set; }
 
-        public int Rank { get; set; }
+        public int? Rank { get; set; }
 
         public virtual ICollection<CharacterDiscordMessage> DiscordMessages { get; set; } = new List<CharacterDiscordMessage>();
 
@@ -38,14 +38,19 @@ namespace HeroismDiscordBot.Service.Entities
 
         public string GetNameAndDescription()
         {
-            var result = $"{(IsMain ? "**Main: **" : string.Empty)}{Name}: {Class}";
+            var result = $"{(IsMain ? "**Main: **" : Left.HasValue ? "**Nicht in Gilde: **" : string.Empty)}{Name}: {Class}";
 
             if (Specializations.Any())
-            {
                 result = $"{result} {string.Join(",", Specializations.Select(s => s.GetDescription()))}";
-            }
 
             return result;
+        }
+
+        public List<Character> GetAlts()
+        {
+            return Player.Characters.Where(a => a.Name != Name)
+                         .OrderBy(a => !a.IsMain)
+                         .ToList();
         }
     }
 }

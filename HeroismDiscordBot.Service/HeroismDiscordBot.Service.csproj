@@ -64,6 +64,12 @@
     <Reference Include="F23.StringSimilarity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\F23.StringSimilarity.3.0.0\lib\netstandard1.0\F23.StringSimilarity.dll</HintPath>
     </Reference>
+    <Reference Include="Flurl, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.2.7.0\lib\net40\Flurl.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurl.Http, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.Http.2.2.1\lib\net45\Flurl.Http.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
@@ -214,12 +220,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Configuration.cs" />
+    <Compile Include="Common\UnixTimestampConverter.cs" />
+    <Compile Include="Discord\MessageBuilders\CharacterMessageBuilder.cs" />
+    <Compile Include="Discord\Commands\CurrentMythicChallengeCommand.cs" />
     <Compile Include="Discord\DiscordClientInitializer.cs" />
     <Compile Include="Common\IConfiguration.cs" />
     <Compile Include="Common\RetryHelper.cs" />
     <Compile Include="Discord\Commands\CommandHandler.cs" />
     <Compile Include="Discord\Commands\HelpCommand.cs" />
     <Compile Include="Discord\Commands\WhoisCommand.cs" />
+    <Compile Include="Discord\MessageBuilders\IDiscordMessageBuilder.cs" />
+    <Compile Include="Discord\MessageBuilders\MythicChallengeMessageBuilder.cs" />
+    <Compile Include="Entities\MythicChallengeData.cs" />
     <Compile Include="Logging\DiscordPrivateMessageTarget.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Common\LongExtensions.cs" />

@@ -112,5 +112,32 @@ namespace HeroismDiscordBot.Service.Properties {
                 return ((string)(this["DiscordCommandPrefix"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WoWOAuthClientId {
+            get {
+                return ((string)(this["WoWOAuthClientId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WoWOAuthClientSecret {
+            get {
+                return ((string)(this["WoWOAuthClientSecret"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WoWOAuthTokenEndpoint {
+            get {
+                return ((string)(this["WoWOAuthTokenEndpoint"]));
+            }
+        }
     }
 }

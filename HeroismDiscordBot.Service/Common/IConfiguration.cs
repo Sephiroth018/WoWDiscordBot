@@ -26,5 +26,13 @@ namespace HeroismDiscordBot.Service.Common
         string DiscordCommandPrefix { get; }
 
         Color DiscordBotMessageColor { get; }
+
+        // ReSharper disable InconsistentNaming
+        string WoWOAuthClientId { get; }
+
+        string WoWOAuthClientSecret { get; }
+
+        string WoWOAuthTokenEndpoint { get; }
+        // ReSharper restore InconsistentNaming
     }
 }

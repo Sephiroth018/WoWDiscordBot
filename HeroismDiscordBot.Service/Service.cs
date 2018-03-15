@@ -11,6 +11,7 @@ using F23.StringSimilarity.Interfaces;
 using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Discord;
 using HeroismDiscordBot.Service.Discord.Commands;
+using HeroismDiscordBot.Service.Discord.MessageBuilders;
 using HeroismDiscordBot.Service.Entities;
 using HeroismDiscordBot.Service.Logging;
 using HeroismDiscordBot.Service.Processors;
@@ -86,6 +87,7 @@ namespace HeroismDiscordBot.Service
             _container.RegisterSingleton<CommandHandler>();
             _container.RegisterSingleton<IServiceProvider>(() => _container);
             _container.RegisterSingleton<IMetricStringDistance, Damerau>();
+            _container.Register(typeof(IDiscordMessageBuilder<>), new[] { typeof(IDiscordMessageBuilder<>).Assembly }, Lifestyle.Singleton);
 
             _container.GetRegistration(typeof(IRepository))
                       .Registration

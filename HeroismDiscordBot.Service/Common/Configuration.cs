@@ -28,5 +28,11 @@ namespace HeroismDiscordBot.Service.Common
         public string DiscordCommandPrefix => Settings.Default.DiscordCommandPrefix;
 
         public Color DiscordBotMessageColor => Color.DarkTeal;
+
+        public string WoWOAuthClientId => Settings.Default.WoWOAuthClientId;
+
+        public string WoWOAuthClientSecret => Settings.Default.WoWOAuthClientSecret;
+
+        public string WoWOAuthTokenEndpoint => Settings.Default.WoWOAuthTokenEndpoint;
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Logging;
 
 namespace HeroismDiscordBot.Service.Discord.Commands
 {
@@ -12,31 +13,40 @@ namespace HeroismDiscordBot.Service.Discord.Commands
         private readonly IConfiguration _configuration;
         private readonly DiscordSocketClient _discordClient;
         private readonly IServiceProvider _provider;
+        private readonly ILogger _logger;
 
-        public CommandHandler(DiscordSocketClient discordClient, IConfiguration configuration, CommandService commandService, IServiceProvider provider)
+        public CommandHandler(DiscordSocketClient discordClient, IConfiguration configuration, CommandService commandService, IServiceProvider provider, ILogger logger)
         {
             _discordClient = discordClient;
             _configuration = configuration;
             _commandService = commandService;
             _provider = provider;
+            _logger = logger;
 
             _discordClient.MessageReceived += OnMessageReceived;
         }
 
         private async Task OnMessageReceived(SocketMessage socketMessage)
         {
-            if (!(socketMessage is SocketUserMessage msg) || msg.Author.Id == _discordClient.CurrentUser.Id)
-                return;
-
-            var context = new SocketCommandContext(_discordClient, msg);
-            var argPos = 0;
-            
-            if (msg.HasStringPrefix(_configuration.DiscordCommandPrefix, ref argPos) || msg.HasMentionPrefix(_discordClient.CurrentUser, ref argPos))
+            try
             {
-                var result = await _commandService.ExecuteAsync(context, argPos, _provider);
+                if (!(socketMessage is SocketUserMessage msg) || msg.Author.Id == _discordClient.CurrentUser.Id)
+                    return;
 
-                if (!result.IsSuccess)
-                    await context.Channel.SendMessageAsync(result.ToString());
+                var context = new SocketCommandContext(_discordClient, msg);
+                var argPos = 0;
+            
+                if (msg.HasStringPrefix(_configuration.DiscordCommandPrefix, ref argPos) || msg.HasMentionPrefix(_discordClient.CurrentUser, ref argPos))
+                {
+                    var result = await _commandService.ExecuteAsync(context, argPos, _provider);
+
+                    if (!result.IsSuccess)
+                        await context.Channel.SendMessageAsync(result.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogException(e);
             }
         }
     }

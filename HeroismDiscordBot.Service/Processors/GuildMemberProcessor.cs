@@ -92,6 +92,7 @@ namespace HeroismDiscordBot.Service.Processors
                                    {
                                        var main = player
                                                   .Characters
+                                                  .Where(c => c.Rank.HasValue)
                                                   .GroupBy(c => c.Rank)
                                                   .OrderBy(c => c.Key)
                                                   .ToList();
@@ -108,6 +109,7 @@ namespace HeroismDiscordBot.Service.Processors
 
                 guildMembersWithState.Where(data => data.state == GuildMemberState.Joined || data.state == GuildMemberState.Left)
                                      .Select(data => data.character)
+                                     //TODO pass GuildMemberState
                                      // ReSharper disable once AccessToDisposedClosure
                                      .Select(data => CreateDiscordMessage(repository, data))
                                      .ForEach(SendDiscordMessage);
@@ -145,11 +147,12 @@ namespace HeroismDiscordBot.Service.Processors
         private (GuildMember, Character, Entities.Character) GetWoWCharacterData((GuildMember guildMember, Entities.Character character) data)
         {
             var (guildMember, character) = data;
-            var characterInfo = RetryHelper.WithRetry(() => _wowClient.GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, guildMember.Character.Name, CharacterOptions.GetEverything), 3);
+            var characterInfo = RetryHelper.WithRetry(() => _wowClient.GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, guildMember?.Character.Name ?? character.Name, CharacterOptions.GetEverything), 3);
 
             return (guildMember, characterInfo, character);
         }
 
+        //TODO move to CharacterMessageBuilder(->CharacterMessageHandler?)
         private void SendDiscordMessage((CharacterDiscordMessage message, Embed messageData) data)
         {
             var guild = _discordClient.GetGuild(_configuration.DiscordGuildId) as IGuild;
@@ -184,7 +187,7 @@ namespace HeroismDiscordBot.Service.Processors
                 message.Character = character;
 
                 repository.CharacterDiscordMessages.Add(message);
-                messageData = BuildPlayerChangedMessage(character, MemberLeftTitle, character.Left.Value, Color.Red, GetAlts(character));
+                messageData = BuildPlayerChangedMessage(character, MemberLeftTitle, character.Left.Value, Color.Red);
             }
             else if (character.DiscordMessages.All(m => m.DiscordMessageType != DiscordMessageType.Joined))
             {
@@ -193,19 +196,21 @@ namespace HeroismDiscordBot.Service.Processors
                 message.Character = character;
 
                 repository.CharacterDiscordMessages.Add(message);
-                messageData = BuildPlayerChangedMessage(character, MemberJoinedTitle, character.Joined, Color.Green, GetAlts(character));
+                messageData = BuildPlayerChangedMessage(character, MemberJoinedTitle, character.Joined, Color.Green);
             }
             else
             {
                 message = character.DiscordMessages.First(m => m.DiscordMessageType == DiscordMessageType.Joined);
-                messageData = BuildPlayerChangedMessage(character, MemberJoinedTitle, character.Joined, Color.Green, GetAlts(character));
+                messageData = BuildPlayerChangedMessage(character, MemberJoinedTitle, character.Joined, Color.Green);
             }
 
             return (message, messageData);
         }
 
-        private static Embed BuildPlayerChangedMessage(Entities.Character character, string title, DateTime timestamp, Color color, IReadOnlyCollection<Entities.Character> alts)
+        //TODO replace with CharacterMessageBuilder
+        private static Embed BuildPlayerChangedMessage(Entities.Character character, string title, DateTime timestamp, Color color)
         {
+            var alts = character.GetAlts();
             var embed = new EmbedBuilder { Title = title };
 
             embed.WithColor(color);
@@ -221,13 +226,6 @@ namespace HeroismDiscordBot.Service.Processors
                 embed.AddField("Spec(s)", string.Join(Environment.NewLine, character.Specializations.Select(s => s.GetDescription())));
 
             return embed.Build();
-        }
-
-        private static List<Entities.Character> GetAlts(Entities.Character c)
-        {
-            return c.Player.Characters.Where(a => a.Name != c.Name && !a.Left.HasValue)
-                    .OrderBy(a => !a.IsMain)
-                    .ToList();
         }
 
         private static string GeneratePetsHash(CharacterPets pets)
@@ -276,7 +274,7 @@ namespace HeroismDiscordBot.Service.Processors
 
             character.AchievementsHash = GenerateAchievementsHash(characterInfo.Achievements);
             character.PetsHash = GeneratePetsHash(characterInfo.Pets);
-            character.Rank = guildMember.Rank;
+            character.Rank = guildMember?.Rank;
 
             return character;
         }
