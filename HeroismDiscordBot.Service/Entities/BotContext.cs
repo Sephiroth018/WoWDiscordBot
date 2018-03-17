@@ -4,6 +4,10 @@ namespace HeroismDiscordBot.Service.Entities
 {
     public class BotContext : DbContext, IRepository
     {
+        public DbSet<GuildMembershipState> GuildMembershipHistory { get; set; }
+
+        public DbSet<GuildRank> GuildRankHistory { get; set; }
+
         public DbSet<CharacterDiscordMessage> CharacterDiscordMessages { get; set; }
 
         public DbSet<EventDiscordMessage> EventDiscordMessages { get; set; }
@@ -29,10 +33,6 @@ namespace HeroismDiscordBot.Service.Entities
                         .WithRequired(m => m.Character)
                         .WillCascadeOnDelete();
             modelBuilder.Entity<Character>()
-                        .HasMany(m => m.DiscordMessages)
-                        .WithOptional(m => m.Character)
-                        .WillCascadeOnDelete();
-            modelBuilder.Entity<Character>()
                         .HasMany(m => m.Invitations)
                         .WithRequired(m => m.Character)
                         .WillCascadeOnDelete();
@@ -40,13 +40,25 @@ namespace HeroismDiscordBot.Service.Entities
                         .HasMany(m => m.Specializations)
                         .WithRequired(m => m.Character)
                         .WillCascadeOnDelete();
+            modelBuilder.Entity<Character>()
+                        .HasMany(m => m.GuildMembershipHistory)
+                        .WithRequired(m => m.Character)
+                        .WillCascadeOnDelete();
+            modelBuilder.Entity<Character>()
+                        .HasMany(m => m.GuildRankHistory)
+                        .WithRequired(m => m.Character)
+                        .WillCascadeOnDelete();
+            modelBuilder.Entity<GuildMembershipState>()
+                        .HasOptional(m => m.DiscordMessage)
+                        .WithRequired(m => m.GuildMembershipState)
+                        .WillCascadeOnDelete();
             modelBuilder.Entity<Event>()
                         .HasMany(m => m.Invitations)
                         .WithRequired(m => m.Event)
                         .WillCascadeOnDelete();
             modelBuilder.Entity<Event>()
-                        .HasRequired(m => m.DiscordMessage)
-                        .WithOptional(m => m.Event)
+                        .HasOptional(m => m.DiscordMessage)
+                        .WithRequired(m => m.Event)
                         .WillCascadeOnDelete();
         }
     }

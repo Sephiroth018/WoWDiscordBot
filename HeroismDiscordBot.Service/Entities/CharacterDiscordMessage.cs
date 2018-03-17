@@ -1,7 +1,14 @@
-﻿namespace HeroismDiscordBot.Service.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HeroismDiscordBot.Service.Entities
 {
     public class CharacterDiscordMessage : BaseDiscordMessage
     {
-        public virtual Character Character { get; set; }
+        [Key]
+        [ForeignKey(nameof(GuildMembershipState))]
+        public int Id { get; set; }
+
+        public virtual GuildMembershipState GuildMembershipState { get; set; }
     }
 }

@@ -12,11 +12,11 @@ namespace HeroismDiscordBot.Service.Entities
 
         [JsonProperty("current_period_start_timestamp")]
         [JsonConverter(typeof(UnixTimestampConverter))]
-        public DateTime From { get; set; }
+        public DateTimeOffset From { get; set; }
 
         [JsonProperty("current_period_end_timestamp")]
         [JsonConverter(typeof(UnixTimestampConverter))]
-        public DateTime Until { get; set; }
+        public DateTimeOffset Until { get; set; }
 
         [JsonProperty("current_keystone_affixes")]
         public List<Affix> Affixes { get; set; }

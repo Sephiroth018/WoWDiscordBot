@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
-using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using F23.StringSimilarity;
@@ -11,7 +10,7 @@ using F23.StringSimilarity.Interfaces;
 using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Discord;
 using HeroismDiscordBot.Service.Discord.Commands;
-using HeroismDiscordBot.Service.Discord.MessageBuilders;
+using HeroismDiscordBot.Service.Discord.MessageHandlers;
 using HeroismDiscordBot.Service.Entities;
 using HeroismDiscordBot.Service.Logging;
 using HeroismDiscordBot.Service.Processors;
@@ -88,6 +87,7 @@ namespace HeroismDiscordBot.Service
             _container.RegisterSingleton<IServiceProvider>(() => _container);
             _container.RegisterSingleton<IMetricStringDistance, Damerau>();
             _container.Register(typeof(IDiscordMessageBuilder<>), new[] { typeof(IDiscordMessageBuilder<>).Assembly }, Lifestyle.Singleton);
+            _container.Register(typeof(IDiscordMessageSender<>), new[] { typeof(IDiscordMessageSender<>).Assembly }, Lifestyle.Singleton);
 
             _container.GetRegistration(typeof(IRepository))
                       .Registration
@@ -125,17 +125,17 @@ namespace HeroismDiscordBot.Service
         {
             using (AsyncScopedLifestyle.BeginScope(_container))
             {
-                var configuration = _container.GetInstance<IConfiguration>();
-                var discordClient = _container.GetInstance<DiscordSocketClient>();
-                var discordGuild = discordClient.GetGuild(configuration.DiscordGuildId) as IGuild;
-                var channel = discordGuild.GetTextChannelAsync(configuration.DiscordMemberChangeChannelId).Result;
-                var messages = channel.GetMessagesAsync().Flatten().Result.ToList();
+                //var configuration = _container.GetInstance<IConfiguration>();
+                //var discordClient = _container.GetInstance<DiscordSocketClient>();
+                //var discordGuild = discordClient.GetGuild(configuration.DiscordGuildId) as IGuild;
+                //var channel = discordGuild.GetTextChannelAsync(configuration.DiscordMemberChangeChannelId).Result;
+                //var messages = channel.GetMessagesAsync().Flatten().Result.ToList();
 
-                while (messages.Any())
-                {
-                    channel.DeleteMessagesAsync(messages.Select(m => m.Id)).Wait();
-                    messages = channel.GetMessagesAsync().Flatten().Result.ToList();
-                }
+                //while (messages.Any())
+                //{
+                //    channel.DeleteMessagesAsync(messages.Select(m => m.Id)).Wait();
+                //    messages = channel.GetMessagesAsync().Flatten().Result.ToList();
+                //}
 
                 using (var repository = _container.GetInstance<Func<IRepository>>().Invoke())
                 {

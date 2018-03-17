@@ -1,6 +1,6 @@
 ﻿using Discord;
 
-namespace HeroismDiscordBot.Service.Discord.MessageBuilders
+namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 {
     public interface IDiscordMessageBuilder<T>
     {

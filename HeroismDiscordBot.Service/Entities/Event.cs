@@ -9,7 +9,7 @@ namespace HeroismDiscordBot.Service.Entities
 
         public string Description { get; set; }
 
-        public DateTime Start { get; set; }
+        public DateTimeOffset Start { get; set; }
 
         public virtual ICollection<Invitation> Invitations { get; set; }
 

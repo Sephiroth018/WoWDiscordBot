@@ -5,7 +5,7 @@ using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Entities;
 using MoreLinq;
 
-namespace HeroismDiscordBot.Service.Discord.MessageBuilders
+namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 {
     public class MythicChallengeMessageBuilder : IDiscordMessageBuilder<MythicChallengeData>
     {

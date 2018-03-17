@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Entities
 {
@@ -8,7 +10,7 @@ namespace HeroismDiscordBot.Service.Entities
     {
         public string Name { get; set; }
 
-        public DateTime Joined { get; set; }
+        public DateTimeOffset Joined { get; set; }
 
         public virtual ICollection<Specialization> Specializations { get; set; } = new List<Specialization>();
 
@@ -16,9 +18,9 @@ namespace HeroismDiscordBot.Service.Entities
 
         public int Level { get; set; }
 
-        public DateTime? Left { get; set; }
+        public DateTimeOffset? Left { get; set; }
 
-        public DateTime LastUpdate { get; set; }
+        public DateTimeOffset LastUpdate { get; set; }
 
         public virtual Player Player { get; set; }
 
@@ -28,9 +30,36 @@ namespace HeroismDiscordBot.Service.Entities
 
         public string PetsHash { get; set; }
 
-        public int? Rank { get; set; }
+        [CanBeNull]
+        [NotMapped]
+        public GuildRank Rank
+        {
+            get { return CurrentMembershipState.State == GuildMemberState.Left ? null : GuildRankHistory.OrderByDescending(r => r.Timestamp).FirstOrDefault(); }
+            set
+            {
+                if (value == null || GuildRankHistory.Contains(value))
+                    return;
 
-        public virtual ICollection<CharacterDiscordMessage> DiscordMessages { get; set; } = new List<CharacterDiscordMessage>();
+                GuildRankHistory.Add(value);
+            }
+        }
+
+        [NotMapped]
+        public GuildMembershipState CurrentMembershipState
+        {
+            get { return GuildMembershipHistory.OrderByDescending(m => m.Timestamp).First(); }
+            set
+            {
+                if (value == null || GuildMembershipHistory.Contains(value))
+                    return;
+
+                GuildMembershipHistory.Add(value);
+            }
+        }
+
+        public virtual ICollection<GuildMembershipState> GuildMembershipHistory { get; set; } = new List<GuildMembershipState>();
+
+        public virtual ICollection<GuildRank> GuildRankHistory { get; set; } = new List<GuildRank>();
 
         public bool IsMain { get; set; }
 

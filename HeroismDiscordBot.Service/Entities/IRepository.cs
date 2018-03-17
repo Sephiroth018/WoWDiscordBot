@@ -10,6 +10,20 @@ namespace HeroismDiscordBot.Service.Entities
 {
     public interface IRepository : IObjectContextAdapter, IDisposable
     {
+        Database Database { get; }
+
+        DbChangeTracker ChangeTracker { get; }
+
+        DbContextConfiguration Configuration { get; }
+
+        DbSet<GuildMembershipState> GuildMembershipHistory { get; set; }
+
+        DbSet<GuildRank> GuildRankHistory { get; set; }
+
+        DbSet<CharacterDiscordMessage> CharacterDiscordMessages { get; set; }
+
+        DbSet<EventDiscordMessage> EventDiscordMessages { get; set; }
+
         DbSet<Character> Characters { get; set; }
 
         DbSet<Player> Players { get; set; }
@@ -18,17 +32,7 @@ namespace HeroismDiscordBot.Service.Entities
 
         DbSet<Invitation> Invitations { get; set; }
 
-        DbSet<CharacterDiscordMessage> CharacterDiscordMessages { get; set; }
-
-        DbSet<EventDiscordMessage> EventDiscordMessages { get; set; }
-
         DbSet<Specialization> Specializations { get; set; }
-
-        Database Database { get; }
-
-        DbChangeTracker ChangeTracker { get; }
-
-        DbContextConfiguration Configuration { get; }
 
         DbSet<TEntity> Set<TEntity>()
             where TEntity : class;

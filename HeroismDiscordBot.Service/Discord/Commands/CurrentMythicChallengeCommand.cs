@@ -3,7 +3,7 @@ using Discord.Commands;
 using Flurl;
 using Flurl.Http;
 using HeroismDiscordBot.Service.Common;
-using HeroismDiscordBot.Service.Discord.MessageBuilders;
+using HeroismDiscordBot.Service.Discord.MessageHandlers;
 using HeroismDiscordBot.Service.Entities;
 
 namespace HeroismDiscordBot.Service.Discord.Commands

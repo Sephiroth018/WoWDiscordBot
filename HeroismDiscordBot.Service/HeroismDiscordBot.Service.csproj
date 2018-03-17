@@ -221,7 +221,7 @@
   <ItemGroup>
     <Compile Include="Common\Configuration.cs" />
     <Compile Include="Common\UnixTimestampConverter.cs" />
-    <Compile Include="Discord\MessageBuilders\CharacterMessageBuilder.cs" />
+    <Compile Include="Discord\MessageHandlers\CharacterDiscordMessageBuilder.cs" />
     <Compile Include="Discord\Commands\CurrentMythicChallengeCommand.cs" />
     <Compile Include="Discord\DiscordClientInitializer.cs" />
     <Compile Include="Common\IConfiguration.cs" />
@@ -229,12 +229,15 @@
     <Compile Include="Discord\Commands\CommandHandler.cs" />
     <Compile Include="Discord\Commands\HelpCommand.cs" />
     <Compile Include="Discord\Commands\WhoisCommand.cs" />
-    <Compile Include="Discord\MessageBuilders\IDiscordMessageBuilder.cs" />
-    <Compile Include="Discord\MessageBuilders\MythicChallengeMessageBuilder.cs" />
+    <Compile Include="Discord\MessageHandlers\IDiscordMessageBuilder.cs" />
+    <Compile Include="Discord\MessageHandlers\IDiscordMessageSender.cs" />
+    <Compile Include="Discord\MessageHandlers\MythicChallengeMessageBuilder.cs" />
+    <Compile Include="Entities\GuildRank.cs" />
+    <Compile Include="Entities\GuildMembershipState.cs" />
+    <Compile Include="Entities\GuildMemberState.cs" />
     <Compile Include="Entities\MythicChallengeData.cs" />
     <Compile Include="Logging\DiscordPrivateMessageTarget.cs" />
     <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Common\LongExtensions.cs" />
     <Compile Include="Logging\NLogProxy.cs" />
     <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Entities\BaseEntity.cs" />
@@ -251,7 +254,6 @@
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Processors\GuildMemberProcessor.cs" />
-    <Compile Include="Processors\GuildMemberState.cs" />
     <Compile Include="Processors\IProcessor.cs" />
     <Compile Include="Processors\IProcessorManager.cs" />
     <Compile Include="Processors\ProcessorManager.cs" />
