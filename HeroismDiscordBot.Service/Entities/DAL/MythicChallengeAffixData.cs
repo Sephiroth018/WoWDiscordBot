@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace HeroismDiscordBot.Service.Entities.DAL
 {
     [UsedImplicitly]
-    public class MythicChallengeData : BaseEntity
+    public class MythicChallengeAffixData : BaseEntity
     {
         public DateTimeOffset From { get; set; }
 

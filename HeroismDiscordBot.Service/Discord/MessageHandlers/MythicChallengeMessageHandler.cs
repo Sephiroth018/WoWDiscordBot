@@ -11,7 +11,7 @@ using MoreLinq;
 namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 {
     [UsedImplicitly]
-    public class MythicChallengeMessageHandler : IDiscordMessageBuilder<MythicChallengeData>, IDiscordMessageSender<MythicChallengeData>
+    public class MythicChallengeMessageHandler : IDiscordMessageBuilder<MythicChallengeAffixData>, IDiscordMessageSender<MythicChallengeAffixData>
     {
         private static readonly Dictionary<MythicChallengeAffixes, (string name, string description)> AffixDescriptions = new Dictionary<MythicChallengeAffixes, (string name, string description)>
                                                                                                                           {
@@ -94,7 +94,7 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
             _memberConfiguration = memberConfiguration;
         }
 
-        public Embed BuildMessage(MythicChallengeData data)
+        public Embed BuildMessage(MythicChallengeAffixData data)
         {
             var embed = new EmbedBuilder { Title = "M+ Affixe" };
 
@@ -107,7 +107,7 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
             return embed;
         }
 
-        public void SendMessage(MythicChallengeData data)
+        public void SendMessage(MythicChallengeAffixData data)
         {
             var messageData = BuildMessage(data);
             var guild = _discordClient.GetGuild(_configuration.GuildId) as IGuild;

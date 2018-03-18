@@ -6,9 +6,11 @@ namespace HeroismDiscordBot.Service.Entities.DAL
     [UsedImplicitly]
     public class BotContext : DbContext, IRepository
     {
+        public DbSet<ProcessorState> ProcessorStates { get; set; }
+
         public DbSet<MythicChallengeAffix> Affixes { get; set; }
 
-        public DbSet<MythicChallengeData> MythicChallengeData { get; set; }
+        public DbSet<MythicChallengeAffixData> MythicChallengeData { get; set; }
 
         public DbSet<GuildMembershipState> GuildMembershipHistory { get; set; }
 
@@ -66,7 +68,7 @@ namespace HeroismDiscordBot.Service.Entities.DAL
                         .HasOptional(m => m.DiscordMessage)
                         .WithRequired(m => m.Event)
                         .WillCascadeOnDelete();
-            modelBuilder.Entity<MythicChallengeData>()
+            modelBuilder.Entity<MythicChallengeAffixData>()
                         .HasMany(m => m.Affixes)
                         .WithMany();
         }

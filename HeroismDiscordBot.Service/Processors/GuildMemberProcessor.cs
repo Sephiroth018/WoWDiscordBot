@@ -32,6 +32,8 @@ namespace HeroismDiscordBot.Service.Processors
             _discordMessageSender = discordMessageSender;
         }
 
+        public ProcessorTypes ProcessorType => ProcessorTypes.GuildMember;
+
         public void DoWork()
         {
             using (var repository = _repositoryFactory.Invoke())
@@ -115,7 +117,6 @@ namespace HeroismDiscordBot.Service.Processors
 
             character = repository.Characters.Create();
 
-            character.Joined = DateTimeOffset.Now;
             character.Name = guildMember.Character.Name;
             character.Specializations = new List<Specialization>();
             character.Invitations = new List<Invitation>();

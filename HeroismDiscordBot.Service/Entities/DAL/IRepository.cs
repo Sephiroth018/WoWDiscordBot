@@ -34,9 +34,11 @@ namespace HeroismDiscordBot.Service.Entities.DAL
 
         DbSet<Specialization> Specializations { get; set; }
 
-        DbSet<MythicChallengeData> MythicChallengeData { get; set; }
+        DbSet<MythicChallengeAffixData> MythicChallengeData { get; set; }
 
         DbSet<MythicChallengeAffix> Affixes { get; set; }
+
+        DbSet<ProcessorState> ProcessorStates { get; set; }
 
         DbSet<TEntity> Set<TEntity>()
             where TEntity : class;

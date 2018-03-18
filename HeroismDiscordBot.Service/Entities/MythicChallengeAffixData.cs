@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace HeroismDiscordBot.Service.Entities
 {
-    public class MythicChallengeData
+    public class MythicChallengeAffixData
     {
         [JsonProperty("current_period")]
         public int CurrentPeriod { get; set; }

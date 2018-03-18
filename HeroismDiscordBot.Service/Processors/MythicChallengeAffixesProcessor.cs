@@ -11,13 +11,13 @@ using MoreLinq;
 namespace HeroismDiscordBot.Service.Processors
 {
     [UsedImplicitly]
-    public class MythicChallengeDataProcessor : IProcessor
+    public class MythicChallengeAffixesProcessor : IProcessor
     {
         private readonly IWoWClientConfiguration _configuration;
-        private readonly IDiscordMessageSender<MythicChallengeData> _messageSender;
+        private readonly IDiscordMessageSender<MythicChallengeAffixData> _messageSender;
         private readonly Func<IRepository> _repositoryFactory;
 
-        public MythicChallengeDataProcessor(IDiscordMessageSender<MythicChallengeData> messageSender,
+        public MythicChallengeAffixesProcessor(IDiscordMessageSender<MythicChallengeAffixData> messageSender,
                                             IWoWClientConfiguration configuration,
                                             Func<IRepository> repositoryFactory)
         {
@@ -25,6 +25,8 @@ namespace HeroismDiscordBot.Service.Processors
             _configuration = configuration;
             _repositoryFactory = repositoryFactory;
         }
+
+        public ProcessorTypes ProcessorType => ProcessorTypes.MythicChallengeAffixes;
 
         public void DoWork()
         {
@@ -37,7 +39,7 @@ namespace HeroismDiscordBot.Service.Processors
 
             var currentMythicData = $"https://{_configuration.Region}.api.battle.net/data/wow/mythic-challenge-mode/?namespace=dynamic-{_configuration.Region}&locale=en_GB"
                                     .WithOAuthBearerToken((string)tokenData.access_token)
-                                    .GetJsonAsync<Entities.MythicChallengeData>()
+                                    .GetJsonAsync<Entities.MythicChallengeAffixData>()
                                     .Result;
 
             using (var repository = _repositoryFactory.Invoke())

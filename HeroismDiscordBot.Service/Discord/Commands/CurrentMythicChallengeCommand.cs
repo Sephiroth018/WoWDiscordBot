@@ -13,9 +13,9 @@ namespace HeroismDiscordBot.Service.Discord.Commands
     public class CurrentMythicChallengeCommand : ModuleBase<SocketCommandContext>
     {
         private readonly Func<IRepository> _repositoryFactory;
-        private readonly IDiscordMessageBuilder<MythicChallengeData> _messageBuilder;
+        private readonly IDiscordMessageBuilder<MythicChallengeAffixData> _messageBuilder;
 
-        public CurrentMythicChallengeCommand(IDiscordMessageBuilder<MythicChallengeData> messageBuilder, Func<IRepository> repositoryFactory)
+        public CurrentMythicChallengeCommand(IDiscordMessageBuilder<MythicChallengeAffixData> messageBuilder, Func<IRepository> repositoryFactory)
         {
             _messageBuilder = messageBuilder;
             _repositoryFactory = repositoryFactory;

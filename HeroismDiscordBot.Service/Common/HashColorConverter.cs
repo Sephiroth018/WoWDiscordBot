@@ -13,7 +13,7 @@ namespace HeroismDiscordBot.Service.Common
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            return ColorTranslator.FromHtml((string)existingValue);
+            return ColorTranslator.FromHtml((string)reader.Value);
         }
 
         public override bool CanConvert(Type objectType)

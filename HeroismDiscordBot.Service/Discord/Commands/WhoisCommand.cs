@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
 using F23.StringSimilarity.Interfaces;
 using HeroismDiscordBot.Service.Common.Configuration;
@@ -16,15 +14,13 @@ namespace HeroismDiscordBot.Service.Discord.Commands
     [UsedImplicitly]
     public class WhoisCommand : ModuleBase<SocketCommandContext>
     {
-        private readonly IDiscordConfiguration _configuration;
         private readonly IMetricStringDistance _distanceCalculator;
         private readonly IDiscorMemberConfiguration _memberConfiguration;
         private readonly IDiscordMessageBuilder<Character> _messageBuilder;
         private readonly Func<IRepository> _repositoryFactory;
 
-        public WhoisCommand(IDiscordConfiguration configuration, Func<IRepository> repositoryFactory, IMetricStringDistance distanceCalculator, IDiscorMemberConfiguration memberConfiguration, IDiscordMessageBuilder<Character> messageBuilder)
+        public WhoisCommand(Func<IRepository> repositoryFactory, IMetricStringDistance distanceCalculator, IDiscorMemberConfiguration memberConfiguration, IDiscordMessageBuilder<Character> messageBuilder)
         {
-            _configuration = configuration;
             _repositoryFactory = repositoryFactory;
             _distanceCalculator = distanceCalculator;
             _memberConfiguration = memberConfiguration;
