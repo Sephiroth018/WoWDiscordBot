@@ -6,7 +6,7 @@ using Discord;
 using Discord.Commands;
 using F23.StringSimilarity.Interfaces;
 using HeroismDiscordBot.Service.Common;
-using HeroismDiscordBot.Service.Entities;
+using HeroismDiscordBot.Service.Entities.DAL;
 
 namespace HeroismDiscordBot.Service.Discord.Commands
 {

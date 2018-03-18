@@ -4,23 +4,16 @@ using System.Linq;
 using Discord;
 using Discord.WebSocket;
 using HeroismDiscordBot.Service.Common;
-using HeroismDiscordBot.Service.Entities;
+using HeroismDiscordBot.Service.Entities.DAL;
 
 namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 {
     public class CharacterDiscordMessageBuilder : IDiscordMessageBuilder<CharacterDiscordMessage>, IDiscordMessageSender<CharacterDiscordMessage>
     {
-        private readonly DiscordSocketClient _discordClient;
-        private readonly IConfiguration _configuration;
         private const string MemberJoinedTitle = "Neuzugang! Willkommen!";
         private const string MemberLeftTitle = "Gildenmitglied hat uns verlassen!";
-
-        private static List<Character> GetAlts(Character character)
-        {
-            return character.Player.Characters.Where(a => a.Name != character.Name && !a.Left.HasValue)
-                            .OrderBy(a => !a.IsMain)
-                            .ToList();
-        }
+        private readonly IConfiguration _configuration;
+        private readonly DiscordSocketClient _discordClient;
 
         public CharacterDiscordMessageBuilder(DiscordSocketClient discordClient, IConfiguration configuration)
         {
@@ -44,7 +37,7 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
                 embed.Title = MemberLeftTitle;
                 embed.Color = Color.Red;
             }
-            
+
             //TODO add status field, make parameter timestamp optional and use lastchanged if not set (with according text)
             embed.AddInlineField("Wer", character.Name);
             embed.AddInlineField("Wann", data.GuildMembershipState.Timestamp.ToString("g"));
@@ -55,7 +48,7 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 
             if (alts.Any())
                 embed.AddField("Alt(s)", string.Join(Environment.NewLine, alts.Select(c => c.GetNameAndDescription())));
-            
+
             return embed.Build();
         }
 
@@ -80,6 +73,13 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 
                 sentMessage?.ModifyAsync(m => m.Embed = messageData).Wait();
             }
+        }
+
+        private static List<Character> GetAlts(Character character)
+        {
+            return character.Player.Characters.Where(a => a.Name != character.Name && !a.Left.HasValue)
+                            .OrderBy(a => !a.IsMain)
+                            .ToList();
         }
     }
 }

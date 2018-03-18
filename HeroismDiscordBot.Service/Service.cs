@@ -11,7 +11,7 @@ using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Discord;
 using HeroismDiscordBot.Service.Discord.Commands;
 using HeroismDiscordBot.Service.Discord.MessageHandlers;
-using HeroismDiscordBot.Service.Entities;
+using HeroismDiscordBot.Service.Entities.DAL;
 using HeroismDiscordBot.Service.Logging;
 using HeroismDiscordBot.Service.Processors;
 using MoreLinq;

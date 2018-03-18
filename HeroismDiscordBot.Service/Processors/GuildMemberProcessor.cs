@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using HeroismDiscordBot.Service.Common;
 using HeroismDiscordBot.Service.Discord.MessageHandlers;
-using HeroismDiscordBot.Service.Entities;
+using HeroismDiscordBot.Service.Entities.DAL;
 using MoreLinq;
 using WowDotNetAPI;
 using WowDotNetAPI.Models;
-using Character = HeroismDiscordBot.Service.Entities.Character;
+using Character = HeroismDiscordBot.Service.Entities.DAL.Character;
 
 namespace HeroismDiscordBot.Service.Processors
 {

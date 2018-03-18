@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HeroismDiscordBot.Service.Entities
+namespace HeroismDiscordBot.Service.Entities.DAL
 {
     public class Player : BaseEntity
     {

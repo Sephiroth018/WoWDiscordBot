@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace HeroismDiscordBot.Service.Entities
+namespace HeroismDiscordBot.Service.Entities.DAL
 {
     public class GuildMembershipState : BaseEntity
     {

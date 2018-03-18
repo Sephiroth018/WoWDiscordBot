@@ -1,5 +1,5 @@
 using System.Data.Entity.Migrations;
-using HeroismDiscordBot.Service.Entities;
+using HeroismDiscordBot.Service.Entities.DAL;
 
 namespace HeroismDiscordBot.Service.Migrations
 {

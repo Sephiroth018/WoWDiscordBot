@@ -232,26 +232,26 @@
     <Compile Include="Discord\MessageHandlers\IDiscordMessageBuilder.cs" />
     <Compile Include="Discord\MessageHandlers\IDiscordMessageSender.cs" />
     <Compile Include="Discord\MessageHandlers\MythicChallengeMessageBuilder.cs" />
-    <Compile Include="Entities\GuildRank.cs" />
-    <Compile Include="Entities\GuildMembershipState.cs" />
-    <Compile Include="Entities\GuildMemberState.cs" />
+    <Compile Include="Entities\DAL\GuildRank.cs" />
+    <Compile Include="Entities\DAL\GuildMembershipState.cs" />
+    <Compile Include="Entities\DAL\GuildMemberState.cs" />
     <Compile Include="Entities\MythicChallengeData.cs" />
     <Compile Include="Logging\DiscordPrivateMessageTarget.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\NLogProxy.cs" />
     <Compile Include="Common\StringExtensions.cs" />
-    <Compile Include="Entities\BaseEntity.cs" />
-    <Compile Include="Entities\Character.cs" />
-    <Compile Include="Entities\BotContext.cs" />
-    <Compile Include="Entities\CharacterDiscordMessage.cs" />
-    <Compile Include="Entities\BaseDiscordMessage.cs" />
-    <Compile Include="Entities\DiscordMessageType.cs" />
-    <Compile Include="Entities\Event.cs" />
-    <Compile Include="Entities\EventDiscordMessage.cs" />
-    <Compile Include="Entities\IRepository.cs" />
-    <Compile Include="Entities\Invitation.cs" />
-    <Compile Include="Entities\InvitationStatus.cs" />
-    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\DAL\BaseEntity.cs" />
+    <Compile Include="Entities\DAL\Character.cs" />
+    <Compile Include="Entities\DAL\BotContext.cs" />
+    <Compile Include="Entities\DAL\CharacterDiscordMessage.cs" />
+    <Compile Include="Entities\DAL\BaseDiscordMessage.cs" />
+    <Compile Include="Entities\DAL\DiscordMessageType.cs" />
+    <Compile Include="Entities\DAL\Event.cs" />
+    <Compile Include="Entities\DAL\EventDiscordMessage.cs" />
+    <Compile Include="Entities\DAL\IRepository.cs" />
+    <Compile Include="Entities\DAL\Invitation.cs" />
+    <Compile Include="Entities\DAL\InvitationStatus.cs" />
+    <Compile Include="Entities\DAL\Player.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Processors\GuildMemberProcessor.cs" />
     <Compile Include="Processors\IProcessor.cs" />
@@ -262,7 +262,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Entities\Specialization.cs" />
+    <Compile Include="Entities\DAL\Specialization.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>

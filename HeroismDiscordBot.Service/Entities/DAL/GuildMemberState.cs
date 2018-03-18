@@ -1,4 +1,4 @@
-﻿namespace HeroismDiscordBot.Service.Entities
+﻿namespace HeroismDiscordBot.Service.Entities.DAL
 {
     public enum GuildMemberState
     {

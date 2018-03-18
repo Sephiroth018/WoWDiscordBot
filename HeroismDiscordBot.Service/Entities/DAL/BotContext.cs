@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity;
 
-namespace HeroismDiscordBot.Service.Entities
+namespace HeroismDiscordBot.Service.Entities.DAL
 {
     public class BotContext : DbContext, IRepository
     {

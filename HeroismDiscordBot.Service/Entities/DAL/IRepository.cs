@@ -6,7 +6,7 @@ using System.Data.Entity.Validation;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HeroismDiscordBot.Service.Entities
+namespace HeroismDiscordBot.Service.Entities.DAL
 {
     public interface IRepository : IObjectContextAdapter, IDisposable
     {
