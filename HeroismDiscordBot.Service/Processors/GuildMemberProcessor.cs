@@ -99,6 +99,11 @@ namespace HeroismDiscordBot.Service.Processors
             }
         }
 
+        public TimeSpan GetNextOccurence()
+        {
+            return new TimeSpan(1, 0, 0);
+        }
+
         private (GuildMember, Character) CreateNewCharacter(IRepository repository, (GuildMember, Character) data)
         {
             var (guildMember, character) = data;

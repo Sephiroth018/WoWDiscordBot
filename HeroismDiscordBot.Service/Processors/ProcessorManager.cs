@@ -23,14 +23,14 @@ namespace HeroismDiscordBot.Service.Processors
         public void Start()
         {
             _timer = new Timer();
-            _timer.Elapsed += (sender, args) => Task.Factory.StartNew(StartProcessor);
+            _timer.Elapsed += (sender, args) => Task.Factory.StartNew(ExecuteProcessor);
             _timer.Interval = new TimeSpan(1, 0, 0).TotalMilliseconds;
             _timer.AutoReset = true;
             _timer.Start();
-            Task.Factory.StartNew(StartProcessor);
+            Task.Factory.StartNew(ExecuteProcessor);
         }
 
-        private void StartProcessor()
+        private void ExecuteProcessor()
         {
             try
             {
@@ -38,6 +38,7 @@ namespace HeroismDiscordBot.Service.Processors
                 {
                     var processor = _container.GetInstance<T>();
                     processor.DoWork();
+                    _timer.Interval = processor.GetNextOccurence().TotalMilliseconds;
                 }
             }
             catch (Exception e)

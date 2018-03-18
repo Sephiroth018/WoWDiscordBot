@@ -8,14 +8,14 @@ using HeroismDiscordBot.Service.Entities.DAL;
 
 namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 {
-    public class CharacterDiscordMessageBuilder : IDiscordMessageBuilder<CharacterDiscordMessage>, IDiscordMessageSender<CharacterDiscordMessage>
+    public class CharacterDiscordMessageHandler : IDiscordMessageBuilder<CharacterDiscordMessage>, IDiscordMessageSender<CharacterDiscordMessage>
     {
         private const string MemberJoinedTitle = "Neuzugang! Willkommen!";
         private const string MemberLeftTitle = "Gildenmitglied hat uns verlassen!";
         private readonly IConfiguration _configuration;
         private readonly DiscordSocketClient _discordClient;
 
-        public CharacterDiscordMessageBuilder(DiscordSocketClient discordClient, IConfiguration configuration)
+        public CharacterDiscordMessageHandler(DiscordSocketClient discordClient, IConfiguration configuration)
         {
             _discordClient = discordClient;
             _configuration = configuration;
@@ -73,6 +73,15 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 
                 sentMessage?.ModifyAsync(m => m.Embed = messageData).Wait();
             }
+        }
+
+        public IDisposable EnterTypingState()
+        {
+            var guild = _discordClient.GetGuild(_configuration.DiscordGuildId) as IGuild;
+            var channel = guild.GetTextChannelAsync(_configuration.DiscordMemberChangeChannelId)
+                               .Result;
+
+            return channel.EnterTypingState();
         }
 
         private static List<Character> GetAlts(Character character)

@@ -221,7 +221,7 @@
   <ItemGroup>
     <Compile Include="Common\Configuration.cs" />
     <Compile Include="Common\UnixTimestampConverter.cs" />
-    <Compile Include="Discord\MessageHandlers\CharacterDiscordMessageBuilder.cs" />
+    <Compile Include="Discord\MessageHandlers\CharacterDiscordMessageHandler.cs" />
     <Compile Include="Discord\Commands\CurrentMythicChallengeCommand.cs" />
     <Compile Include="Discord\DiscordClientInitializer.cs" />
     <Compile Include="Common\IConfiguration.cs" />
@@ -231,10 +231,13 @@
     <Compile Include="Discord\Commands\WhoisCommand.cs" />
     <Compile Include="Discord\MessageHandlers\IDiscordMessageBuilder.cs" />
     <Compile Include="Discord\MessageHandlers\IDiscordMessageSender.cs" />
-    <Compile Include="Discord\MessageHandlers\MythicChallengeMessageBuilder.cs" />
+    <Compile Include="Discord\MessageHandlers\MythicChallengeMessageHandler.cs" />
     <Compile Include="Entities\DAL\GuildRank.cs" />
     <Compile Include="Entities\DAL\GuildMembershipState.cs" />
     <Compile Include="Entities\DAL\GuildMemberState.cs" />
+    <Compile Include="Entities\DAL\MythicChallengeAffix.cs" />
+    <Compile Include="Entities\DAL\MythicChallengeAffixes.cs" />
+    <Compile Include="Entities\DAL\MythicChallengeData.cs" />
     <Compile Include="Entities\MythicChallengeData.cs" />
     <Compile Include="Logging\DiscordPrivateMessageTarget.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -256,6 +259,7 @@
     <Compile Include="Processors\GuildMemberProcessor.cs" />
     <Compile Include="Processors\IProcessor.cs" />
     <Compile Include="Processors\IProcessorManager.cs" />
+    <Compile Include="Processors\MythicChallengeDataProcessor.cs" />
     <Compile Include="Processors\ProcessorManager.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

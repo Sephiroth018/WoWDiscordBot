@@ -76,7 +76,7 @@ namespace HeroismDiscordBot.Service
                     .GetExportedTypes()
                     .Where(t => t.GetInterfaces().Any(i => i == typeof(IProcessor)))
                     .Select(t => typeof(ProcessorManager<>).MakeGenericType(t))
-                    .ForEach(t => _container.Register(typeof(IProcessorManager), t, Lifestyle.Singleton));
+                    .ForEach(t => Lifestyle.Singleton.CreateRegistration(() => (IProcessorManager)Activator.CreateInstance(t), _container));
             _container.RegisterSingleton(() => DiscordClientInitializer.Initialize(_container).Result);
             _container.RegisterSingleton(() => new CommandService(new CommandServiceConfig
                                                                   {
