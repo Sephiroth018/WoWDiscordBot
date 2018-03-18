@@ -18,8 +18,8 @@ namespace HeroismDiscordBot.Service.Processors
         private readonly Func<IRepository> _repositoryFactory;
 
         public MythicChallengeAffixesProcessor(IDiscordMessageSender<MythicChallengeAffixData> messageSender,
-                                            IWoWClientConfiguration configuration,
-                                            Func<IRepository> repositoryFactory)
+                                               IWoWClientConfiguration configuration,
+                                               Func<IRepository> repositoryFactory)
         {
             _messageSender = messageSender;
             _configuration = configuration;
@@ -30,21 +30,24 @@ namespace HeroismDiscordBot.Service.Processors
 
         public void DoWork()
         {
-            var tokenData = _configuration.TokenEndpoint
-                                          .SetQueryParam("grant_type", "client_credentials")
-                                          .SetQueryParam("client_id", _configuration.ClientId)
-                                          .SetQueryParam("client_secret", _configuration.ClientSecret)
-                                          .GetJsonAsync()
-                                          .Result;
-
-            var currentMythicData = $"https://{_configuration.Region}.api.battle.net/data/wow/mythic-challenge-mode/?namespace=dynamic-{_configuration.Region}&locale=en_GB"
-                                    .WithOAuthBearerToken((string)tokenData.access_token)
-                                    .GetJsonAsync<Entities.MythicChallengeAffixData>()
-                                    .Result;
-
             using (var repository = _repositoryFactory.Invoke())
             {
                 var savedMythicData = repository.MythicChallengeData.OrderByDescending(m => m.Until).FirstOrDefault();
+
+                if (savedMythicData?.Until > DateTimeOffset.Now)
+                    return;
+
+                var tokenData = _configuration.TokenEndpoint
+                                              .SetQueryParam("grant_type", "client_credentials")
+                                              .SetQueryParam("client_id", _configuration.ClientId)
+                                              .SetQueryParam("client_secret", _configuration.ClientSecret)
+                                              .GetJsonAsync()
+                                              .Result;
+
+                var currentMythicData = $"https://{_configuration.Region}.api.battle.net/data/wow/mythic-challenge-mode/?namespace=dynamic-{_configuration.Region}&locale=en_GB"
+                                        .WithOAuthBearerToken((string)tokenData.access_token)
+                                        .GetJsonAsync<Entities.MythicChallengeAffixData>()
+                                        .Result;
 
                 if (savedMythicData == null || savedMythicData.From != currentMythicData.From)
                 {
@@ -89,7 +92,7 @@ namespace HeroismDiscordBot.Service.Processors
             using (var repository = _repositoryFactory.Invoke())
             {
                 var savedMythicData = repository.MythicChallengeData.OrderByDescending(m => m.Until).FirstOrDefault();
-                var nextOccurence = (savedMythicData?.Until ?? DateTimeOffset.Now.AddMinutes(-1)) - DateTimeOffset.Now;
+                var nextOccurence = (savedMythicData?.Until.AddMinutes(1) ?? DateTimeOffset.Now.AddMinutes(-1)) - DateTimeOffset.Now;
                 var minOccurence = new TimeSpan(0, 0, 1);
 
                 return nextOccurence < minOccurence ? minOccurence : nextOccurence;
