@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using HeroismDiscordBot.Service.Discord.MessageHandlers;
 using HeroismDiscordBot.Service.Entities.DAL;
+using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Discord.Commands
 {
     [Name("CurrentMythicChallenge")]
+    [UsedImplicitly]
     public class CurrentMythicChallengeCommand : ModuleBase<SocketCommandContext>
     {
         private readonly Func<IRepository> _repositoryFactory;
@@ -21,6 +23,7 @@ namespace HeroismDiscordBot.Service.Discord.Commands
 
         [Command("currentmythic")]
         [Summary("Gibt die aktuellen M+ Affixe aus.")]
+        [UsedImplicitly]
         public async Task CurrentMythic()
         {
             using (var unused = Context.Channel.EnterTypingState())

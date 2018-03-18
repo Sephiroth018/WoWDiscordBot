@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
 using HeroismDiscordBot.Service.Discord.MessageHandlers;
 using HeroismDiscordBot.Service.Entities.DAL;
+using JetBrains.Annotations;
 using MoreLinq;
 using WowDotNetAPI;
 using WowDotNetAPI.Models;
@@ -11,15 +13,15 @@ using Character = HeroismDiscordBot.Service.Entities.DAL.Character;
 
 namespace HeroismDiscordBot.Service.Processors
 {
-    // ReSharper disable once UnusedMember.Global
+    [UsedImplicitly]
     public class GuildMemberProcessor : IProcessor
     {
-        private readonly IConfiguration _configuration;
+        private readonly IWoWClientConfiguration _configuration;
         private readonly IDiscordMessageSender<CharacterDiscordMessage> _discordMessageSender;
         private readonly Func<IRepository> _repositoryFactory;
         private readonly IExplorer _wowClient;
 
-        public GuildMemberProcessor(IConfiguration configuration,
+        public GuildMemberProcessor(IWoWClientConfiguration configuration,
                                     Func<IRepository> repositoryFactory,
                                     IExplorer wowClient,
                                     IDiscordMessageSender<CharacterDiscordMessage> discordMessageSender)
@@ -34,7 +36,7 @@ namespace HeroismDiscordBot.Service.Processors
         {
             using (var repository = _repositoryFactory.Invoke())
             {
-                var guildMembers = RetryHelper.WithRetry(() => _wowClient.GetGuild(_configuration.WoWRegion, _configuration.WoWRealm, _configuration.WoWGuild, GuildOptions.GetEverything), 3)
+                var guildMembers = RetryHelper.WithRetry(() => _wowClient.GetGuild(_configuration.Region, _configuration.Realm, _configuration.Guild, GuildOptions.GetEverything), 3)
                                               .Members
                                               .ToList();
                 var characters = GetGuildCharacters(repository, guildMembers)
@@ -153,7 +155,7 @@ namespace HeroismDiscordBot.Service.Processors
 
         private WowDotNetAPI.Models.Character GetWoWCharacterData(Character character)
         {
-            return RetryHelper.WithRetry(() => _wowClient.GetCharacter(_configuration.WoWRegion, _configuration.WoWRealm, character.Name, CharacterOptions.GetEverything), 3);
+            return RetryHelper.WithRetry(() => _wowClient.GetCharacter(_configuration.Region, _configuration.Realm, character.Name, CharacterOptions.GetEverything), 3);
         }
 
         private CharacterDiscordMessage CreateAndBuildDiscordMessage(IRepository repository, Character character)

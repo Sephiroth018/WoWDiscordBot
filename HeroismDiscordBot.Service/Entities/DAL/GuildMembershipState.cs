@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Entities.DAL
 {
+    [UsedImplicitly]
     public class GuildMembershipState : BaseEntity
     {
         public DateTimeOffset Timestamp { get; set; }

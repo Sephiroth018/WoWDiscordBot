@@ -6,19 +6,16 @@ using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Entities.DAL
 {
+    [UsedImplicitly]
     public class Character : BaseEntity
     {
         public string Name { get; set; }
-
-        public DateTimeOffset Joined { get; set; }
 
         public virtual ICollection<Specialization> Specializations { get; set; } = new List<Specialization>();
 
         public string Class { get; set; }
 
         public int Level { get; set; }
-
-        public DateTimeOffset? Left { get; set; }
 
         public DateTimeOffset LastUpdate { get; set; }
 
@@ -67,19 +64,12 @@ namespace HeroismDiscordBot.Service.Entities.DAL
 
         public string GetNameAndDescription()
         {
-            var result = $"{(IsMain ? "**Main: **" : Left.HasValue ? "**Nicht in Gilde: **" : string.Empty)}{Name}: {Class}";
+            var result = $"{(IsMain ? "**Main: **" : CurrentMembershipState.State == GuildMemberState.Left ? "**Nicht in Gilde: **" : string.Empty)}{Name}: {Class}";
 
             if (Specializations.Any())
                 result = $"{result} {string.Join(",", Specializations.Select(s => s.GetDescription()))}";
 
             return result;
-        }
-
-        public List<Character> GetAlts()
-        {
-            return Player.Characters.Where(a => a.Name != Name)
-                         .OrderBy(a => !a.IsMain)
-                         .ToList();
         }
     }
 }

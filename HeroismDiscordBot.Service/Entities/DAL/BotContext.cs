@@ -1,7 +1,9 @@
 ﻿using System.Data.Entity;
+using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Entities.DAL
 {
+    [UsedImplicitly]
     public class BotContext : DbContext, IRepository
     {
         public DbSet<MythicChallengeAffix> Affixes { get; set; }

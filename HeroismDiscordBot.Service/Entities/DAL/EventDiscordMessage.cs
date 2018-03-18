@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Entities.DAL
 {
+    [UsedImplicitly]
     public class EventDiscordMessage : BaseDiscordMessage
     {
         [Key]

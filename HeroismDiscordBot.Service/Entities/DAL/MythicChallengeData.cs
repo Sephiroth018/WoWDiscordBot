@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Entities.DAL
 {
+    [UsedImplicitly]
     public class MythicChallengeData : BaseEntity
     {
         public DateTimeOffset From { get; set; }

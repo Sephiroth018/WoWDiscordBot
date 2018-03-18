@@ -1,0 +1,26 @@
+﻿{
+  "discord": {
+    "guild_id": 0,
+    "token": "",
+    "error_message_target_id": 0,
+    "command_prefix": "!",
+    "bot_message_color": "#000000",
+    "member_change_configuration": {
+      "notification_channel_id": 0,
+      "member_left_color": "Red",
+      "member_joined_color": "Green",
+      "show_non_guild_alts": true,
+      "show_non_guild_characters": false
+    }
+  },
+  "wow": {
+    "client_id": "",
+    "realm": "",
+    "region": "EU",
+    "guild": "",
+    "locale": "de_DE",
+    "client_secret": "",
+    "token_endpoint": ""
+  },
+  "culture": "de-DE"
+}

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Discord;
 using Discord.WebSocket;
-using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
 using HeroismDiscordBot.Service.Entities.DAL;
+using JetBrains.Annotations;
 using MoreLinq;
 
 namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 {
+    [UsedImplicitly]
     public class MythicChallengeMessageHandler : IDiscordMessageBuilder<MythicChallengeData>, IDiscordMessageSender<MythicChallengeData>
     {
         private static readonly Dictionary<MythicChallengeAffixes, (string name, string description)> AffixDescriptions = new Dictionary<MythicChallengeAffixes, (string name, string description)>
@@ -80,21 +82,23 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
                                                                                                                               }
                                                                                                                           };
 
-        private readonly IConfiguration _configuration;
+        private readonly IDiscordConfiguration _configuration;
 
         private readonly DiscordSocketClient _discordClient;
+        private readonly IDiscorMemberConfiguration _memberConfiguration;
 
-        public MythicChallengeMessageHandler(DiscordSocketClient discordClient, IConfiguration configuration)
+        public MythicChallengeMessageHandler(DiscordSocketClient discordClient, IDiscordConfiguration configuration, IDiscorMemberConfiguration memberConfiguration)
         {
             _discordClient = discordClient;
             _configuration = configuration;
+            _memberConfiguration = memberConfiguration;
         }
 
         public Embed BuildMessage(MythicChallengeData data)
         {
             var embed = new EmbedBuilder { Title = "M+ Affixe" };
 
-            embed.WithColor(_configuration.DiscordBotMessageColor);
+            embed.WithColor(_configuration.BotMessageColor.ToDiscordColor());
             embed.WithDescription($"Die folgenden Affixe sind von {data.From.ToLocalTime():g} bis {data.Until.ToLocalTime():g} aktiv:");
             data.Affixes
                 .OrderBy(a => a.StartingLevel)
@@ -106,8 +110,8 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
         public void SendMessage(MythicChallengeData data)
         {
             var messageData = BuildMessage(data);
-            var guild = _discordClient.GetGuild(_configuration.DiscordGuildId) as IGuild;
-            var channel = guild.GetTextChannelAsync(_configuration.DiscordMemberChangeChannelId)
+            var guild = _discordClient.GetGuild(_configuration.GuildId) as IGuild;
+            var channel = guild.GetTextChannelAsync(_memberConfiguration.NotificationChannelId)
                                .Result;
             channel.SendMessageAsync("", embed: messageData)
                    .Wait();
@@ -115,8 +119,8 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 
         public IDisposable EnterTypingState()
         {
-            var guild = _discordClient.GetGuild(_configuration.DiscordGuildId) as IGuild;
-            var channel = guild.GetTextChannelAsync(_configuration.DiscordMemberChangeChannelId)
+            var guild = _discordClient.GetGuild(_configuration.GuildId) as IGuild;
+            var channel = guild.GetTextChannelAsync(_memberConfiguration.NotificationChannelId)
                                .Result;
 
             return channel.EnterTypingState();

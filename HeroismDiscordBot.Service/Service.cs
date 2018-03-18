@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
@@ -7,7 +8,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using F23.StringSimilarity;
 using F23.StringSimilarity.Interfaces;
-using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
 using HeroismDiscordBot.Service.Discord;
 using HeroismDiscordBot.Service.Discord.Commands;
 using HeroismDiscordBot.Service.Discord.MessageHandlers;
@@ -55,17 +56,21 @@ namespace HeroismDiscordBot.Service
 
         private void BuildContainer()
         {
+            var configuration = Configuration.LoadConfiguration();
             _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
             Target.Register<DiscordPrivateMessageTarget>("DiscordPrivateMessage");
             ConfigurationItemFactory.Default.CreateInstance = type => _container.GetRegistration(type)?.GetInstance() ?? Activator.CreateInstance(type);
 
             _container.RegisterConditional(typeof(ILogger), context => typeof(NLogProxy<>).MakeGenericType(context.Consumer.ImplementationType), Lifestyle.Singleton, context => true);
-            _container.Register<IConfiguration, Configuration>(Lifestyle.Singleton);
+            _container.Register<IConfiguration>(() => configuration, Lifestyle.Singleton);
+            _container.Register<IWoWClientConfiguration>(() => configuration.WoW, Lifestyle.Singleton);
+            _container.Register<IDiscordConfiguration>(() => configuration.Discord, Lifestyle.Singleton);
+            _container.Register<IDiscorMemberConfiguration>(() => configuration.Discord.MemberChangeConfiguration, Lifestyle.Singleton);
             _container.Register<IExplorer>(() =>
                                            {
-                                               var configuration = _container.GetInstance<IConfiguration>();
-                                               return new WowExplorer(configuration.WoWRegion, configuration.WoWLocale, configuration.WoWApiKey);
+                                               var config = _container.GetInstance<IWoWClientConfiguration>();
+                                               return new WowExplorer(config.Region, config.Locale, config.ClientId);
                                            },
                                            Lifestyle.Scoped);
             _container.Register<IRepository, BotContext>(Lifestyle.Transient);
@@ -99,6 +104,11 @@ namespace HeroismDiscordBot.Service
         public void StartService()
         {
             //CleanUp();
+            var configuration = _container.GetInstance<IConfiguration>();
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(configuration.Culture);
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(configuration.Culture);
+
+            //start discord command handler
             _container.GetInstance<CommandHandler>();
 
             _processorManagers = GetProcessorManagers();

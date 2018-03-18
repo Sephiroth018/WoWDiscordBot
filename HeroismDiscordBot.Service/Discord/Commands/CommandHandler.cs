@@ -2,20 +2,22 @@
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
-using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
 using HeroismDiscordBot.Service.Logging;
+using JetBrains.Annotations;
 
 namespace HeroismDiscordBot.Service.Discord.Commands
 {
+    [UsedImplicitly]
     public class CommandHandler
     {
         private readonly CommandService _commandService;
-        private readonly IConfiguration _configuration;
+        private readonly IDiscordConfiguration _configuration;
         private readonly DiscordSocketClient _discordClient;
-        private readonly IServiceProvider _provider;
         private readonly ILogger _logger;
+        private readonly IServiceProvider _provider;
 
-        public CommandHandler(DiscordSocketClient discordClient, IConfiguration configuration, CommandService commandService, IServiceProvider provider, ILogger logger)
+        public CommandHandler(DiscordSocketClient discordClient, IDiscordConfiguration configuration, CommandService commandService, IServiceProvider provider, ILogger logger)
         {
             _discordClient = discordClient;
             _configuration = configuration;
@@ -35,8 +37,8 @@ namespace HeroismDiscordBot.Service.Discord.Commands
 
                 var context = new SocketCommandContext(_discordClient, msg);
                 var argPos = 0;
-            
-                if (msg.HasStringPrefix(_configuration.DiscordCommandPrefix, ref argPos) || msg.HasMentionPrefix(_discordClient.CurrentUser, ref argPos))
+
+                if (msg.HasStringPrefix(_configuration.CommandPrefix, ref argPos) || msg.HasMentionPrefix(_discordClient.CurrentUser, ref argPos))
                 {
                     var result = await _commandService.ExecuteAsync(context, argPos, _provider);
 

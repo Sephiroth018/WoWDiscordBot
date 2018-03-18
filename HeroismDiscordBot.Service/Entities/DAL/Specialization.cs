@@ -1,5 +1,8 @@
-﻿namespace HeroismDiscordBot.Service.Entities.DAL
+﻿using JetBrains.Annotations;
+
+namespace HeroismDiscordBot.Service.Entities.DAL
 {
+    [UsedImplicitly]
     public class Specialization : BaseEntity
     {
         public string Name { get; set; }

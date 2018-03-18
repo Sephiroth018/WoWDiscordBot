@@ -2,44 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HeroismDiscordBot.Service.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="WoWApiKey" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WoWRealm" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WoWGuild" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="DiscordGuildId" Type="System.UInt64" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="DiscordToken" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WoWRegion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="DiscordMemberChangeChannelId" Type="System.UInt64" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="WoWLocale" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ErrorMessageTargetId" Type="System.UInt64" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="DiscordCommandPrefix" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">!</Value>
-    </Setting>
-    <Setting Name="WoWOAuthClientId" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WoWOAuthClientSecret" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WoWOAuthTokenEndpoint" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+    <Setting Name="SettingsFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">settings.json</Value>
     </Setting>
   </Settings>
 </SettingsFile>

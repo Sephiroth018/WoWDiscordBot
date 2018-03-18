@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
 using JetBrains.Annotations;
 using SimpleInjector;
 
@@ -17,7 +17,7 @@ namespace HeroismDiscordBot.Service.Discord
         public static async Task<DiscordSocketClient> Initialize(Container container)
         {
             var discordClient = new DiscordSocketClient(new DiscordSocketConfig { ConnectionTimeout = 60000 });
-            await discordClient.LoginAsync(TokenType.Bot, container.GetInstance<IConfiguration>().DiscordToken);
+            await discordClient.LoginAsync(TokenType.Bot, container.GetInstance<IDiscordConfiguration>().Token);
             await discordClient.StartAsync();
 
             discordClient.Ready += () =>

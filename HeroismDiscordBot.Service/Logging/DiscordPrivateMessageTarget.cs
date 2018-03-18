@@ -1,6 +1,6 @@
 ﻿using System;
 using Discord.WebSocket;
-using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
 using JetBrains.Annotations;
 using NLog;
 using NLog.Targets;
@@ -11,10 +11,10 @@ namespace HeroismDiscordBot.Service.Logging
     [UsedImplicitly]
     public class DiscordPrivateMessageTarget : TargetWithLayout
     {
-        private readonly IConfiguration _configuration;
+        private readonly IDiscordConfiguration _configuration;
         private readonly DiscordSocketClient _discordClient;
 
-        public DiscordPrivateMessageTarget(DiscordSocketClient discordClient, IConfiguration configuration)
+        public DiscordPrivateMessageTarget(DiscordSocketClient discordClient, IDiscordConfiguration configuration)
         {
             _discordClient = discordClient;
             _configuration = configuration;

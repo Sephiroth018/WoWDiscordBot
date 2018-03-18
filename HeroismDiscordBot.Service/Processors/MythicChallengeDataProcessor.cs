@@ -2,21 +2,23 @@
 using System.Linq;
 using Flurl;
 using Flurl.Http;
-using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
 using HeroismDiscordBot.Service.Discord.MessageHandlers;
 using HeroismDiscordBot.Service.Entities.DAL;
+using JetBrains.Annotations;
 using MoreLinq;
 
 namespace HeroismDiscordBot.Service.Processors
 {
+    [UsedImplicitly]
     public class MythicChallengeDataProcessor : IProcessor
     {
-        private readonly IConfiguration _configuration;
+        private readonly IWoWClientConfiguration _configuration;
         private readonly IDiscordMessageSender<MythicChallengeData> _messageSender;
         private readonly Func<IRepository> _repositoryFactory;
 
         public MythicChallengeDataProcessor(IDiscordMessageSender<MythicChallengeData> messageSender,
-                                            IConfiguration configuration,
+                                            IWoWClientConfiguration configuration,
                                             Func<IRepository> repositoryFactory)
         {
             _messageSender = messageSender;
@@ -26,14 +28,14 @@ namespace HeroismDiscordBot.Service.Processors
 
         public void DoWork()
         {
-            var tokenData = _configuration.WoWOAuthTokenEndpoint
+            var tokenData = _configuration.TokenEndpoint
                                           .SetQueryParam("grant_type", "client_credentials")
-                                          .SetQueryParam("client_id", _configuration.WoWOAuthClientId)
-                                          .SetQueryParam("client_secret", _configuration.WoWOAuthClientSecret)
+                                          .SetQueryParam("client_id", _configuration.ClientId)
+                                          .SetQueryParam("client_secret", _configuration.ClientSecret)
                                           .GetJsonAsync()
                                           .Result;
 
-            var currentMythicData = $"https://{_configuration.WoWRegion}.api.battle.net/data/wow/mythic-challenge-mode/?namespace=dynamic-{_configuration.WoWRegion}&locale=en_GB"
+            var currentMythicData = $"https://{_configuration.Region}.api.battle.net/data/wow/mythic-challenge-mode/?namespace=dynamic-{_configuration.Region}&locale=en_GB"
                                     .WithOAuthBearerToken((string)tokenData.access_token)
                                     .GetJsonAsync<Entities.MythicChallengeData>()
                                     .Result;

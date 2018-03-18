@@ -3,18 +3,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using HeroismDiscordBot.Service.Common;
+using HeroismDiscordBot.Service.Common.Configuration;
+using JetBrains.Annotations;
 using MoreLinq;
 
 namespace HeroismDiscordBot.Service.Discord.Commands
 {
     [Name("Help")]
+    [UsedImplicitly]
     public class HelpCommand : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _commandService;
-        private readonly IConfiguration _configuration;
+        private readonly IDiscordConfiguration _configuration;
 
-        public HelpCommand(CommandService commandService, IConfiguration configuration)
+        public HelpCommand(CommandService commandService, IDiscordConfiguration configuration)
         {
             _commandService = commandService;
             _configuration = configuration;
@@ -22,12 +24,13 @@ namespace HeroismDiscordBot.Service.Discord.Commands
 
         [Command("help")]
         [Summary("Gibt eine Liste aller verfügbaren Befehle aus")]
+        [UsedImplicitly]
         public async Task GetHelp()
         {
             var builder = new EmbedBuilder
                           {
-                              Color = _configuration.DiscordBotMessageColor,
-                              Description = $"All meine Befehle werden mit entweder mit `{_configuration.DiscordCommandPrefix}<Befehl>` ausgeführt oder indem du mich erwähnst (`@Villain <Befehl>`).{Environment.NewLine}"
+                              Color = _configuration.BotMessageColor.ToDiscordColor(),
+                              Description = $"All meine Befehle werden mit entweder mit `{_configuration.CommandPrefix}<Befehl>` ausgeführt oder indem du mich erwähnst (`@Villain <Befehl>`).{Environment.NewLine}"
                                             + "Ich beherrsche folgende Befehle:"
                           };
 

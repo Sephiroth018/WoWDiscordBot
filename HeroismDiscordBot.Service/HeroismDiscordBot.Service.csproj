@@ -113,6 +113,7 @@
     <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
     </Reference>
@@ -219,12 +220,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Configuration.cs" />
+    <Compile Include="Common\Configuration\Configuration.cs" />
+    <Compile Include="Common\Configuration\DiscordConfiguration.cs" />
+    <Compile Include="Common\Configuration\DiscorMemberConfiguration.cs" />
+    <Compile Include="Common\Configuration\IConfiguration.cs" />
+    <Compile Include="Common\Configuration\IDiscordConfiguration.cs" />
+    <Compile Include="Common\Configuration\IDiscorMemberConfiguration.cs" />
+    <Compile Include="Common\Configuration\IWoWClientConfiguration.cs" />
+    <Compile Include="Common\Configuration\WoWClientConfiguration.cs" />
+    <Compile Include="Common\HashColorConverter.cs" />
     <Compile Include="Common\UnixTimestampConverter.cs" />
+    <Compile Include="Discord\ColorExtensions.cs" />
     <Compile Include="Discord\MessageHandlers\CharacterDiscordMessageHandler.cs" />
     <Compile Include="Discord\Commands\CurrentMythicChallengeCommand.cs" />
     <Compile Include="Discord\DiscordClientInitializer.cs" />
-    <Compile Include="Common\IConfiguration.cs" />
     <Compile Include="Common\RetryHelper.cs" />
     <Compile Include="Discord\Commands\CommandHandler.cs" />
     <Compile Include="Discord\Commands\HelpCommand.cs" />
@@ -248,7 +257,6 @@
     <Compile Include="Entities\DAL\BotContext.cs" />
     <Compile Include="Entities\DAL\CharacterDiscordMessage.cs" />
     <Compile Include="Entities\DAL\BaseDiscordMessage.cs" />
-    <Compile Include="Entities\DAL\DiscordMessageType.cs" />
     <Compile Include="Entities\DAL\Event.cs" />
     <Compile Include="Entities\DAL\EventDiscordMessage.cs" />
     <Compile Include="Entities\DAL\IRepository.cs" />
@@ -301,6 +309,18 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="settings.Debug.json">
+      <DependentUpon>settings.json</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="settings.json">
+      <TransformOnBuild>true</TransformOnBuild>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="settings.Release.json">
+      <DependentUpon>settings.json</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
     </None>
   </ItemGroup>
   <ItemGroup>
