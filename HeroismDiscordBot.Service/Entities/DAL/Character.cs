@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using JetBrains.Annotations;
@@ -16,6 +17,8 @@ namespace HeroismDiscordBot.Service.Entities.DAL
         public string Class { get; set; }
 
         public int Level { get; set; }
+
+        public DateTimeOffset LastWoWUpdate { get; set; }
 
         public DateTimeOffset LastUpdate { get; set; }
 

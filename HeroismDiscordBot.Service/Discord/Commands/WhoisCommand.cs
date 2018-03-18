@@ -36,7 +36,7 @@ namespace HeroismDiscordBot.Service.Discord.Commands
             using (var repository = _repositoryFactory.Invoke())
             {
                 var characters = repository.Characters
-                                           .Where(c => _memberConfiguration.ShowNonGuildCharacters || c.CurrentMembershipState.State != GuildMemberState.Left)
+                                           .Where(c => _memberConfiguration.ShowNonGuildCharacters || c.GuildMembershipHistory.OrderByDescending(m => m.Timestamp).FirstOrDefault().State != GuildMemberState.Left)
                                            .ToList()
                                            .Where(c => _distanceCalculator.Distance(c.Name.ToLowerInvariant(), name.ToLowerInvariant()) < name.Length / 2.0);
 

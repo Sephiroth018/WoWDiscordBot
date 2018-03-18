@@ -74,7 +74,6 @@ namespace HeroismDiscordBot.Service.Processors
                         {
                             state.State = ProcessorStates.Failed;
 
-                            Console.WriteLine(e);
                             throw;
                         }
                         finally

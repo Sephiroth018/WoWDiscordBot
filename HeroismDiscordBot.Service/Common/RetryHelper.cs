@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace HeroismDiscordBot.Service.Common
 {
@@ -28,6 +29,7 @@ namespace HeroismDiscordBot.Service.Common
         }
 
         public static T WithRetry<T>(Func<T> action, int maxRetries)
+            where T : class
         {
             var currentTries = 0;
             var exceptions = new List<Exception>();
@@ -40,6 +42,9 @@ namespace HeroismDiscordBot.Service.Common
                 }
                 catch (Exception e)
                 {
+                    if (e is WebException wex && wex.Status == WebExceptionStatus.ProtocolError && wex.Response is HttpWebResponse res && res.StatusCode == HttpStatusCode.NotFound)
+                        return null;
+
                     exceptions.Add(e);
                     currentTries++;
                 }

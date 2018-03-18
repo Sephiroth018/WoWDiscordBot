@@ -49,6 +49,7 @@ namespace HeroismDiscordBot.Service.Processors
                                  .AsParallel()
                                  .WithDegreeOfParallelism(5)
                                  .Select(c => (GetWoWCharacterData(c), c))
+                                 .Where<(WowDotNetAPI.Models.Character character, Character)>(data => data.character != null)
                                  .ToList()
                                  .Select(EnrichCharacter)
                                  .ToList();
@@ -86,7 +87,7 @@ namespace HeroismDiscordBot.Service.Processors
 
                                        player.Characters.ForEach(c => c.IsMain = false);
 
-                                       if (main.First().Count() == 1)
+                                       if (main.Any() && main.First().Count() == 1)
                                            main.First()
                                                .First()
                                                .IsMain = true;
@@ -206,7 +207,8 @@ namespace HeroismDiscordBot.Service.Processors
             character.Class = characterClasses
                               .First(c => c.Id == (int)characterInfo.Class)
                               .Name;
-            character.LastUpdate = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(characterInfo.LastModified));
+            character.LastWoWUpdate = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(characterInfo.LastModified));
+            character.LastUpdate = DateTimeOffset.Now;
             character.Level = characterInfo.Level;
 
             var talentSet = characterInfo.Talents.FirstOrDefault(t => t.Selected);

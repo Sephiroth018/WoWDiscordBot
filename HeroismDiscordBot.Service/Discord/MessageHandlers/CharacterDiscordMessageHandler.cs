@@ -21,6 +21,19 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
                                                                                                    { GuildMemberState.Left, "Nicht in der Gilde" }
                                                                                                };
 
+        private static readonly Dictionary<int, string> GuildRankMapping = new Dictionary<int, string>
+                                                                           {
+                                                                               { 2, "Offi/Mischmeister" },
+                                                                               { 1, "Offi" },
+                                                                               { 0, "Chef" },
+                                                                               { 7, "Twink" },
+                                                                               { 5, "Member" },
+                                                                               { 6, "NewbeProbezeit" },
+                                                                               { 4, "Raidmember" },
+                                                                               { 3, "Auktionator" },
+                                                                               { 8, "Newbe" }
+                                                                           };
+
         private readonly IDiscordConfiguration _configuration;
         private readonly DiscordSocketClient _discordClient;
         private readonly IDiscorMemberConfiguration _memberConfiguration;
@@ -34,12 +47,12 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
 
         public Embed BuildMessage(Character character)
         {
-            return BuildMessageInternal(character, true);
+            return BuildMessageInternal(character, false);
         }
 
         public Embed BuildMessage(CharacterDiscordMessage data)
         {
-            return BuildMessageInternal(data.GuildMembershipState.Character, false);
+            return BuildMessageInternal(data.GuildMembershipState.Character, true);
         }
 
         public void SendMessage(CharacterDiscordMessage data)
@@ -81,34 +94,41 @@ namespace HeroismDiscordBot.Service.Discord.MessageHandlers
                             .ToList();
         }
 
-        private Embed BuildMessageInternal(Character character, bool showStatus)
+        private Embed BuildMessageInternal(Character character, bool changeMessage)
         {
             var alts = GetAlts(character);
             var embed = new EmbedBuilder();
 
-            if (character.CurrentMembershipState.State == GuildMemberState.Joined)
-            {
-                embed.Title = MemberJoinedTitle;
-                embed.Color = _memberConfiguration.MemberJoinedColor.ToDiscordColor();
-            }
+            if (changeMessage)
+                if (character.CurrentMembershipState.State == GuildMemberState.Joined)
+                {
+                    embed.Title = MemberJoinedTitle;
+                    embed.Color = _memberConfiguration.MemberJoinedColor.ToDiscordColor();
+                }
+                else
+                {
+                    embed.Title = MemberLeftTitle;
+                    embed.Color = _memberConfiguration.MemberLeftColor.ToDiscordColor();
+                }
             else
-            {
-                embed.Title = MemberLeftTitle;
-                embed.Color = _memberConfiguration.MemberLeftColor.ToDiscordColor();
-            }
+                embed.Color = _configuration.BotMessageColor.ToDiscordColor();
 
             embed.AddInlineField("Wer", character.Name);
-            if (showStatus)
+            if (!changeMessage)
                 embed.AddInlineField("Status", MemberStateTranslations[character.CurrentMembershipState.State]);
-            embed.AddInlineField("Wann", character.CurrentMembershipState.Timestamp.ToLocalTime().ToString("g"));
-            embed.AddInlineField("Letzte Aktualisierung", character.LastUpdate.ToLocalTime().ToString("g"));
+            embed.AddInlineField(changeMessage ? "Wann" : "Seit", character.CurrentMembershipState.Timestamp.ToLocalTime().ToString("g"));
             embed.AddInlineField("Klasse", character.Class);
+            if (!changeMessage && character.Rank != null)
+                embed.AddInlineField("Rang", GuildRankMapping[character.Rank.Rank]);
 
             if (character.Specializations.Any())
                 embed.AddField("Spec(s)", string.Join(Environment.NewLine, character.Specializations.Select(s => s.GetDescription())));
 
             if (alts.Any())
                 embed.AddField("Alt(s)", string.Join(Environment.NewLine, alts.Select(c => c.GetNameAndDescription())));
+
+            embed.AddField("Letzte Aktualisierung in WoW", character.LastWoWUpdate.ToLocalTime().ToString("g"));
+            embed.AddField("Letzte Aktualisierung", character.LastUpdate.ToLocalTime().ToString("g"));
 
             return embed.Build();
         }
