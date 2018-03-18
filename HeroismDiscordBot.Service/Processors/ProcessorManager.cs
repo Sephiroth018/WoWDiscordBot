@@ -70,7 +70,7 @@ namespace HeroismDiscordBot.Service.Processors
                             state.State = ProcessorStates.Waiting;
                             state.LastCompleted = DateTimeOffset.Now;
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             state.State = ProcessorStates.Failed;
 
