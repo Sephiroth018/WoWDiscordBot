@@ -44,7 +44,6 @@ namespace HeroismDiscordBot.Service
         {
             try
             {
-                BuildContainer();
                 StartService();
             }
             catch (Exception e)
@@ -58,9 +57,6 @@ namespace HeroismDiscordBot.Service
         {
             var configuration = Configuration.LoadConfiguration();
             _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-
-            Target.Register<DiscordPrivateMessageTarget>("DiscordPrivateMessage");
-            ConfigurationItemFactory.Default.CreateInstance = type => _container.GetRegistration(type)?.GetInstance() ?? Activator.CreateInstance(type);
 
             _container.RegisterConditional(typeof(ILogger), context => typeof(NLogProxy<>).MakeGenericType(context.Consumer.ImplementationType), Lifestyle.Singleton, context => true);
             _container.Register<IConfiguration>(() => configuration, Lifestyle.Singleton);
@@ -76,23 +72,28 @@ namespace HeroismDiscordBot.Service
             _container.Register<IRepository, BotContext>(Lifestyle.Transient);
             _container.RegisterSingleton<Func<IRepository>>(() => _container.GetInstance<IRepository>());
             _container.RegisterCollection<IProcessor>(new[] { Assembly.GetExecutingAssembly() });
-            _container.RegisterSingleton(() => DiscordClientInitializer.Initialize(_container).Result);
+            _container.RegisterSingleton<IServiceProvider>(() => _container);
+            _container.RegisterSingleton<IMetricStringDistance, Damerau>();
+            _container.Register(typeof(IDiscordMessageBuilder<>), new[] { typeof(IDiscordMessageBuilder<>).Assembly }, Lifestyle.Singleton);
+            _container.Register(typeof(IDiscordMessageSender<>), new[] { typeof(IDiscordMessageSender<>).Assembly }, Lifestyle.Singleton);
+
+
             _container.RegisterSingleton(() => new CommandService(new CommandServiceConfig
                                                                   {
                                                                       CaseSensitiveCommands = false,
                                                                       DefaultRunMode = RunMode.Async
                                                                   }));
             _container.RegisterSingleton<CommandHandler>();
-            _container.RegisterSingleton<IServiceProvider>(() => _container);
-            _container.RegisterSingleton<IMetricStringDistance, Damerau>();
-            _container.Register(typeof(IDiscordMessageBuilder<>), new[] { typeof(IDiscordMessageBuilder<>).Assembly }, Lifestyle.Singleton);
-            _container.Register(typeof(IDiscordMessageSender<>), new[] { typeof(IDiscordMessageSender<>).Assembly }, Lifestyle.Singleton);
+            _container.RegisterSingleton(() => DiscordClientInitializer.Initialize(_container).Result);
 
             _container.GetRegistration(typeof(IRepository))
                       .Registration
                       .SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent, "Handled by application code");
 
             _container.Verify();
+
+            Target.Register<DiscordPrivateMessageTarget>("DiscordPrivateMessage");
+            ConfigurationItemFactory.Default.CreateInstance = type => _container.GetRegistration(type)?.GetInstance() ?? Activator.CreateInstance(type);
         }
 
         public void StartService()
