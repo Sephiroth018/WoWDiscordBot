@@ -124,9 +124,11 @@ namespace HeroismDiscordBot.Service.Processors
             character.GuildMembershipHistory = new List<GuildMembershipState>();
             character.GuildRankHistory = new List<GuildRank>();
 
-            character.CurrentMembershipState = repository.GuildMembershipHistory.Create();
-            character.CurrentMembershipState.State = GuildMemberState.Joined;
-            character.CurrentMembershipState.Timestamp = DateTimeOffset.Now;
+            var guildMembership = repository.GuildMembershipHistory.Create();
+            guildMembership.State = GuildMemberState.Joined;
+            guildMembership.Timestamp = DateTimeOffset.Now;
+
+            character.CurrentMembershipState = guildMembership;
 
             repository.Characters.Add(character);
 
@@ -139,17 +141,21 @@ namespace HeroismDiscordBot.Service.Processors
 
             if (guildMember == null && character.CurrentMembershipState.State != GuildMemberState.Left)
             {
-                character.CurrentMembershipState = repository.GuildMembershipHistory.Create();
-                character.CurrentMembershipState.State = GuildMemberState.Left;
-                character.CurrentMembershipState.Timestamp = DateTimeOffset.Now;
+                var guildMembership = repository.GuildMembershipHistory.Create();
+                guildMembership.State = GuildMemberState.Left;
+                guildMembership.Timestamp = DateTimeOffset.Now;
+
+                character.CurrentMembershipState = guildMembership;
             }
 
             if (guildMember != null && character.Rank?.Rank != guildMember.Rank)
             {
-                character.Rank = repository.GuildRankHistory.Create();
+                var rank = repository.GuildRankHistory.Create();
                 // ReSharper disable once PossibleNullReferenceException
-                character.Rank.Timestamp = DateTimeOffset.Now;
-                character.Rank.Rank = guildMember.Rank;
+                rank.Timestamp = DateTimeOffset.Now;
+                rank.Rank = guildMember.Rank;
+
+                character.Rank = rank;
             }
 
             return character;
@@ -237,8 +243,9 @@ namespace HeroismDiscordBot.Service.Processors
 
         private List<(GuildMember guildMember, Character character)> GetGuildCharacters(IRepository repository, IEnumerable<GuildMember> guildMembers)
         {
-            return guildMembers.FullJoin(repository.Characters, m => m.Character.Name, c => c.Name, m => (guildMember: m, character: null), c => (guildMember: null, character: c), (m, c) => (guildMember: m, character: c))
+            var x = guildMembers.FullJoin(repository.Characters, m => m.Character.Name, c => c.Name, m => (guildMember: m, character: null), c => (guildMember: null, character: c), (m, c) => (guildMember: m, character: c))
                                .ToList();
+            return x;
         }
     }
 }
