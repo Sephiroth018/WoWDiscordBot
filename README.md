@@ -1,5 +1,5 @@
-# HeroismDiscordBot
-A discord bot mainly for the World of Warcraft guild Heroism-Antonidas(EU), but the architecture is setup so others could use it too (only the texts for output to discord are currently hardcoded, will be changed soon).
+# WoWDiscordBot
+A discord bot to post various information regarding World of Warcraft.
 
 It has multiple functions:
 * Notify people about characters joining or leaving the guild

@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{98FEA1E1-927F-4160-8E4D-3C85887A9A1D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WoWClient</RootNamespace>
+    <AssemblyName>WoWClient</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Flurl, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.2.7.1\lib\net40\Flurl.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurl.Http, Version=2.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.Http.2.3.1\lib\net45\Flurl.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq, Version=2.10.21623.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.2.10.0\lib\net40\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApiClient.cs" />
+    <Compile Include="Converters\BoolBitConverter.cs" />
+    <Compile Include="Converters\DoubleConverter.cs" />
+    <Compile Include="Entities\Achievement.cs" />
+    <Compile Include="Entities\AchievementCriterion.cs" />
+    <Compile Include="Entities\Boss.cs" />
+    <Compile Include="Entities\Character\Audit.cs" />
+    <Compile Include="Entities\Character\BonusSummary.cs" />
+    <Compile Include="Entities\CharacterBase.cs" />
+    <Compile Include="Entities\CharacterClass.cs" />
+    <Compile Include="Entities\CharacterClassData.cs" />
+    <Compile Include="Entities\Character\Achievements.cs" />
+    <Compile Include="Entities\Character\ArenaBracket2V2.cs" />
+    <Compile Include="Entities\Character\BossKill.cs" />
+    <Compile Include="Entities\Character\Brackets.cs" />
+    <Compile Include="Entities\Character\Character.cs" />
+    <Compile Include="Entities\Character\Appearance.cs" />
+    <Compile Include="Entities\Character\Guild.cs" />
+    <Compile Include="Entities\Character\Stats.cs" />
+    <Compile Include="Entities\Character\Talent.cs" />
+    <Compile Include="Entities\Character\Feed.cs" />
+    <Compile Include="Entities\Character\Items.cs" />
+    <Compile Include="Entities\Character\Profession.cs" />
+    <Compile Include="Entities\Character\Professions.cs" />
+    <Compile Include="Entities\Character\Progression.cs" />
+    <Compile Include="Entities\Character\Pvp.cs" />
+    <Compile Include="Entities\Character\Raid.cs" />
+    <Compile Include="Entities\Character\Reputation.cs" />
+    <Compile Include="Entities\Character\Slots.cs" />
+    <Compile Include="Entities\Item\ItemUpgrade.cs" />
+    <Compile Include="Entities\Spec.cs" />
+    <Compile Include="Entities\Character\Specialization.cs" />
+    <Compile Include="Entities\Character\Statistic.cs" />
+    <Compile Include="Entities\Character\Statistics.cs" />
+    <Compile Include="Entities\Character\SubCategory.cs" />
+    <Compile Include="Entities\Talent.cs" />
+    <Compile Include="Entities\TalentSpell.cs" />
+    <Compile Include="Entities\Character\Title.cs" />
+    <Compile Include="Entities\CurrentKeystoneAffix.cs" />
+    <Compile Include="Entities\Enums\AvailableModes.cs" />
+    <Compile Include="Entities\Enums\Classes.cs" />
+    <Compile Include="Entities\Enums\Genders.cs" />
+    <Compile Include="Entities\Enums\NewsType.cs" />
+    <Compile Include="Entities\Enums\PowerTypes.cs" />
+    <Compile Include="Entities\Enums\Races.cs" />
+    <Compile Include="Entities\Enums\Role.cs" />
+    <Compile Include="Entities\Faction.cs" />
+    <Compile Include="Entities\Enums\FeedType.cs" />
+    <Compile Include="Entities\Guild\Group.cs" />
+    <Compile Include="Entities\Guild\GroupGuild.cs" />
+    <Compile Include="Entities\Guild\GroupMember.cs" />
+    <Compile Include="Entities\Guild\Guild.cs" />
+    <Compile Include="Entities\Guild\Achievements.cs" />
+    <Compile Include="Entities\Guild\Challenge.cs" />
+    <Compile Include="Entities\Guild\Character.cs" />
+    <Compile Include="Entities\Guild\Emblem.cs" />
+    <Compile Include="Entities\Guild\Member.cs" />
+    <Compile Include="Entities\Guild\News.cs" />
+    <Compile Include="Entities\Item\Appearance.cs" />
+    <Compile Include="Entities\Item\ArtifactTrait.cs" />
+    <Compile Include="Entities\Item\Damage.cs" />
+    <Compile Include="Entities\Item\Item.cs" />
+    <Compile Include="Entities\Item\ItemSource.cs" />
+    <Compile Include="Entities\Item\ItemSpell.cs" />
+    <Compile Include="Entities\Item\ItemSpellStats.cs" />
+    <Compile Include="Entities\Item\ItemStat.cs" />
+    <Compile Include="Entities\Item\Relic.cs" />
+    <Compile Include="Entities\Item\TooltipParams.cs" />
+    <Compile Include="Entities\Item\Weapon.cs" />
+    <Compile Include="Entities\Item\WeaponInfo.cs" />
+    <Compile Include="Entities\KeystoneAffix.cs" />
+    <Compile Include="Entities\KeystoneAffixes.cs" />
+    <Compile Include="Entities\Links.cs" />
+    <Compile Include="Entities\Location.cs" />
+    <Compile Include="Entities\Map.cs" />
+    <Compile Include="Entities\Mount.cs" />
+    <Compile Include="Entities\Character\MountCollection.cs" />
+    <Compile Include="Entities\MythicChallengeMode.cs" />
+    <Compile Include="Entities\Npc.cs" />
+    <Compile Include="Entities\Pet.cs" />
+    <Compile Include="Entities\Character\PetCollection.cs" />
+    <Compile Include="Entities\Character\PetSlot.cs" />
+    <Compile Include="Entities\PetStats.cs" />
+    <Compile Include="Entities\Realm.cs" />
+    <Compile Include="Entities\Character\RecommendedItem.cs" />
+    <Compile Include="Entities\Self.cs" />
+    <Compile Include="Entities\Zone.cs" />
+    <Compile Include="Entities\ZoneData.cs" />
+    <Compile Include="IApiClient.cs" />
+    <Compile Include="Locale.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Region.cs" />
+    <Compile Include="Converters\TimeSpanConverter.cs" />
+    <Compile Include="Converters\UnixTimestampConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" />
+  <Import Project="..\packages\NUnit.3.10.1\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.10.1\build\NUnit.props')" />
+  <Import Project="..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.props" Condition="Exists('..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{05E17AB6-F77B-4DF8-960F-6C250148AC87}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WoWClient.Tests</RootNamespace>
+    <AssemblyName>WoWClient.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JsonDiffPatch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JsonDiffPatch.2.0.45\lib\net452\JsonDiffPatch.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MSTest.TestFramework.1.2.1\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MSTest.TestFramework.1.2.1\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.10.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.10.1\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Character\CharacterTest.cs" />
+    <Compile Include="Entities\Guild\GuildTest.cs" />
+    <Compile Include="SerializationTestBase.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WoWClient\WoWClient.csproj">
+      <Project>{98fea1e1-927f-4160-8e4d-3c85887a9a1d}</Project>
+      <Name>WoWClient</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Amotea.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Aristeæs.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Askia.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Attias.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Babu.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Babú.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Braggus.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Brochete.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Bummsinchen.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Coalado.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Cánì.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Derbabu.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Devilscircle.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Donfeey.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Drâcôn.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Edîra.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Ensei.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Erfarium.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Falcenauge.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Feargessen.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Feyde.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Fibble.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Floopknight.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Fordrágon.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Forsetî.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Frufoomane.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Harax.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Hellvista.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Hereward.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Herrdernacht.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Indaríel.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Jhiin.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Jüthanos.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Kaiyuna.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Kenshiu.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Kitera.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Kleinbabu.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Kwenk.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Lîsan.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Maddobhunt.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Madob.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Madobdudu.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Madobjr.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Madobmonk.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Madobschami.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Madobshadow.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Madobwitch.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Miyoon.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Mxlnuxchan.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Máchétè.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Mágerius.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nastoria.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nekretia.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nephalia.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nodamused.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nodari.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nodbad.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nodlock.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nodshamy.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Nâsoras.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Opuppero.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Peppilina.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Pirafina.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Pruul.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Raìsed.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Segîmer.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Sethek.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Shingon.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Shureddo.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Sissy.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Skooby.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Squassel.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Sýdnéy.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Tajimy.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Thilayria.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Thorjn.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Thusneldâ.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Timalia.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Urdli.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Vanted.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Willkan.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Xaroks.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Ximali.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Zerberuus.json" />
+    <EmbeddedResource Include="Entities\Character\TestData\Character.Áárón.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Arras Sis.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Ayahuasca.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.BlackDaggers.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Flame of Destiny.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Gimps for Ever.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Heroism.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.InPânic.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Legends of Azeróth.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Luzifers Hinrichter.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.Miracle.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.TeaM Inc.json" />
+    <EmbeddedResource Include="Entities\Guild\TestData\Guild.The Resurrection.json" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.props'))" />
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.targets'))" />
+    <Error Condition="!Exists('..\packages\NUnit.3.10.1\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.10.1\build\NUnit.props'))" />
+    <Error Condition="!Exists('..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props'))" />
+  </Target>
+  <Import Project="..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.1.2.1\build\net45\MSTest.TestAdapter.targets')" />
+</Project>
