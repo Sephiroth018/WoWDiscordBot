@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32C46825-499D-4A24-BA65-A8177B546C26}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWClient", "WoWClient\WoWClient.csproj", "{98FEA1E1-927F-4160-8E4D-3C85887A9A1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWDiscordBot.Service", "WoWDiscordBot.Service\WoWDiscordBot.Service.csproj", "{0D873C11-C65C-4AE7-A190-075C8BBD55F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWClient.Tests", "WoWClient.Tests\WoWClient.Tests.csproj", "{05E17AB6-F77B-4DF8-960F-6C250148AC87}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98FEA1E1-927F-4160-8E4D-3C85887A9A1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98FEA1E1-927F-4160-8E4D-3C85887A9A1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98FEA1E1-927F-4160-8E4D-3C85887A9A1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98FEA1E1-927F-4160-8E4D-3C85887A9A1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D873C11-C65C-4AE7-A190-075C8BBD55F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D873C11-C65C-4AE7-A190-075C8BBD55F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D873C11-C65C-4AE7-A190-075C8BBD55F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D873C11-C65C-4AE7-A190-075C8BBD55F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05E17AB6-F77B-4DF8-960F-6C250148AC87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05E17AB6-F77B-4DF8-960F-6C250148AC87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05E17AB6-F77B-4DF8-960F-6C250148AC87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05E17AB6-F77B-4DF8-960F-6C250148AC87}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DE9F29BD-74A3-41E7-BF11-29434917DCEE}
+	EndGlobalSection
+EndGlobal
